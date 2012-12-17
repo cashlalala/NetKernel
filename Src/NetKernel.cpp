@@ -151,6 +151,27 @@ BOOL ResolveUri(const CHAR* lpszUri, std::string& strUrl, BOOL& bSecure, std::st
 }
 
 
+inline std::string genBoundary()
+{
+	// Boundary in header:	"somestring"
+	// Boundary in body:	"--somestring"
+
+	srand(static_cast<int>(time(NULL)));
+	std::string boundary = "----------";
+	for(int i=0; i<15; ++i)
+		boundary += static_cast<char>(rand() % 26) + 'A';
+	boundary += "\r\n";
+	return boundary;
+}
+
+
+PyObject* genPyBoundary()
+{
+	std::string boundary = genBoundary();
+	return Py_BuildValue("s", boundary.substr(0, boundary.length() - 2).c_str());
+}
+
+
 PyNetKernel::PyNetKernel() :
 PyCallback(),
 m_hInternet(NULL),
@@ -275,27 +296,6 @@ BOOL PyNetKernel::SendHttpReq(HINTERNET& hRequest, BOOL bUseProxy, const CHAR* l
 		return FALSE;
 
 	return TRUE;
-}
-
-
-inline std::string genBoundary()
-{
-	// Boundary in header:	"somestring"
-	// Boundary in body:	"--somestring"
-
-	srand(static_cast<int>(time(NULL)));
-	std::string boundary = "----------";
-	for(int i=0; i<15; ++i)
-		boundary += static_cast<char>(rand() % 26) + 'A';
-	boundary += "\r\n";
-	return boundary;
-}
-
-
-PyObject* genPyBoundary()
-{
-	std::string boundary = genBoundary();
-	return Py_BuildValue("s", boundary.substr(0, boundary.length() - 2).c_str());
 }
 
 
