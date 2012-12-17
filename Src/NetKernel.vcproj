@@ -224,6 +224,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\INetKernel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\NetKernel.h"
 				>
 			</File>

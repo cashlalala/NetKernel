@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Taiwan) resources
+// Chinese (Traditional, Taiwan) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
-#ifdef _WIN32
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
 #pragma code_page(950)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -90,7 +88,6 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,269,224,50,16
     PUSHBUTTON      "Cancel",IDCANCEL,326,224,50,16
-    CTEXT           "TODO: Place dialog controls here.",IDC_STATIC,10,96,300,8
     CONTROL         "",IDC_TAB1,"SysTabControl32",0x0,7,7,369,200
 END
 
@@ -98,9 +95,7 @@ IDD_DIALOG_OpenUrl DIALOGEX 0, 0, 366, 207
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,257,186,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,309,186,50,14
-    GROUPBOX        "Input Params",IDC_STATIC_OPENURL_INPUTPANEL,7,7,250,165
+    GROUPBOX        "Input Params",IDC_STATIC_OPENURL_INPUTPANEL,7,7,339,165
     CTEXT           "URL",IDC_STATIC_URL,12,24,60,14
     EDITTEXT        IDC_EDIT_OPENURL_URL,81,20,65,19,ES_AUTOHSCROLL
     CTEXT           "Header",IDC_STATIC,12,94,60,14
@@ -113,6 +108,8 @@ BEGIN
     EDITTEXT        IDC_EDIT_OPENURL_METHOD,81,45,65,19,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_OPENURL_BODY,81,112,65,19,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_OPENURL_CONTENTLEN,81,133,65,19,ES_AUTOHSCROLL
+    PUSHBUTTON      "Send",IDC_BUTTON_SEND,296,152,50,14
+    PUSHBUTTON      "Button2",IDC_BUTTON2,200,139,55,13
 END
 
 IDD_DIALOG_SendHttpRequest DIALOGEX 0, 0, 186, 93
@@ -120,8 +117,6 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 EXSTYLE WS_EX_TRANSPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
 END
 
 
@@ -170,7 +165,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -191,13 +186,13 @@ BEGIN
     IDD_DIALOG_OpenUrl, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 359
+        RIGHTMARGIN, 346
         VERTGUIDE, 12
         VERTGUIDE, 72
         VERTGUIDE, 146
-        VERTGUIDE, 257
+        VERTGUIDE, 200
         TOPMARGIN, 7
-        BOTTOMMARGIN, 200
+        BOTTOMMARGIN, 172
         HORZGUIDE, 39
         HORZGUIDE, 64
         HORZGUIDE, 87
@@ -224,12 +219,12 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "&About TestBed..."
 END
 
-#endif    // Chinese (Taiwan) resources
+#endif    // Chinese (Traditional, Taiwan) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

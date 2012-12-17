@@ -1007,8 +1007,7 @@ PyObject* PyNetKernel::ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszR
 	return pRet;
 }
 
-PyObject* PyNetKernel::OpenUrl(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
-							   const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
+DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
 {
 	DWORD dwStatusCode = 0;
 	DWORD dwAvailableData = 0;
@@ -1020,7 +1019,7 @@ PyObject* PyNetKernel::OpenUrl(const CHAR* lpszUri, const CHAR* lpszMethod, cons
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 
-	PYAUTO_UNLOCK
+	//PYAUTO_UNLOCK
 	if(m_bCacheDownload)
 	{
 		// CacheCallbacker is a fake COM object and Release function would delete itself.
@@ -1069,26 +1068,30 @@ PyObject* PyNetKernel::OpenUrl(const CHAR* lpszUri, const CHAR* lpszMethod, cons
 			bSuccess = TRUE;
 		} while(0);
 	}
-	PYAUTO_LOCK
+	//PYAUTO_LOCK
 
-	PyObject* pRet = NULL;
-	if(m_bForceClose)
-	{
-		pRet = Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
-	}
-	else if(bSuccess)
-	{
-		pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, pResBuffer, dwAvailableData);
-	}
-	else
-		pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, "", 0);
+	httpResp.dwError = dwError;
+	httpResp.dwStatusCode = dwStatusCode;
+	httpResp.strResponse.assign(pResBuffer,dwAvailableData);
+	return dwError;
+	//PyObject* pRet = NULL;
+	//if(m_bForceClose)
+	//{
+	//	pRet = Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
+	//}
+	//else if(bSuccess)
+	//{
+	//	pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, pResBuffer, dwAvailableData);
+	//}
+	//else
+	//	pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, "", 0);
 
-	if (pResBuffer)
-	{
-		delete [] pResBuffer;
-		pResBuffer = NULL;
-	}
-	return pRet;
+	//if (pResBuffer)
+	//{
+	//	delete [] pResBuffer;
+	//	pResBuffer = NULL;
+	//}
+	//return pRet;
 }
 
 PyObject* PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
@@ -1391,6 +1394,22 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 					 )
 {
     return TRUE;
+}
+
+static INetKernel* stpNetKernel = NULL;
+
+INetKernel* GetNetKernelInstance()
+{
+	if (stpNetKernel == NULL) stpNetKernel = new PyNetKernel();
+	return stpNetKernel;
+}
+void DelInstance()
+{
+	if (stpNetKernel)
+	{
+		delete stpNetKernel;
+		stpNetKernel = NULL;
+	}
 }
 
 #ifdef _MANAGED

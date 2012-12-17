@@ -190,6 +190,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\Utility\Debug.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DlgOpenUrl.cpp"
 				>
 			</File>
@@ -228,7 +232,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\Utility\Debug.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DlgOpenUrl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Src\INetKernel.h"
 				>
 			</File>
 			<File
@@ -267,6 +279,18 @@
 			</File>
 			<File
 				RelativePath=".\res\TestBed.rc2"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Util"
+			>
+			<File
+				RelativePath=".\NetKernelLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetKernelLoader.h"
 				>
 			</File>
 		</Filter>

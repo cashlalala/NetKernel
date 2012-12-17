@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Utility\Debug.h" />
+    <ClInclude Include="INetKernel.h" />
     <ClInclude Include="NetKernel.h" />
   </ItemGroup>
   <ItemGroup>

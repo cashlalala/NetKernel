@@ -1,4 +1,5 @@
 #pragma once
+#include "afxwin.h"
 
 
 // CDlgOpenUrl dialog
@@ -25,4 +26,8 @@ public:
 	CString m_szHeader;
 	CString m_szBody;
 	UINT m_nContentLen;
+	CButton m_btnSend;
+	afx_msg void OnBnClickedButtonSend();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };

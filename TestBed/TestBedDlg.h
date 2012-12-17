@@ -38,4 +38,5 @@ private:
 	CDialog m_dlgTabItemAry[TOTAL_TEST_FUNC_COUNT];
 public:
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
 };

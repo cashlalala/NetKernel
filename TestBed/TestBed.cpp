@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TestBed.h"
 #include "TestBedDlg.h"
+#include "NetKernelLoader.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -58,6 +59,8 @@ BOOL CTestBedApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
+	m_pNetKernel = m_NetKernelLoader.GetInstance();
+
 	CTestBedDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
@@ -75,4 +78,12 @@ BOOL CTestBedApp::InitInstance()
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
 	return FALSE;
+}
+
+
+int CTestBedApp::ExitInstance()
+{
+	// TODO: Add your specialized code here and/or call the base class
+	m_NetKernelLoader.DelInstance();
+	return CWinApp::ExitInstance();
 }

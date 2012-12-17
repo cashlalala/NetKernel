@@ -8,6 +8,8 @@
 #endif
 
 #include "resource.h"		// main symbols
+#include "f:\power2go9\subsys\netkernel\src\inetkernel.h"
+#include "netkernelloader.h"
 
 
 // CTestBedApp:
@@ -18,7 +20,7 @@ class CTestBedApp : public CWinApp
 {
 public:
 	CTestBedApp();
-
+	INetKernel* m_pNetKernel;
 // Overrides
 	public:
 	virtual BOOL InitInstance();
@@ -26,6 +28,10 @@ public:
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
+	
+	virtual int ExitInstance();
+private:
+	NetKernelLoader m_NetKernelLoader;
 };
 
 extern CTestBedApp theApp;

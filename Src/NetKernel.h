@@ -9,6 +9,8 @@
 #include <vector>
 #include <Urlmon.h>
 
+#include "INetKernel.h"
+
 const int CALLBACK_OK = 1;
 const int CALLBACK_CANCEL = 0;
 const int ERROR_PROCESS		= -1;	// Prepare data error or process data error.
@@ -30,12 +32,15 @@ struct MultiPartInfo
 	DWORD dwFileSize;		// The file size.
 };
 
+extern "C" __declspec(dllexport) INetKernel* GetNetKernelInstance();
+extern "C" __declspec(dllexport) void DelInstance();
+
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
 inline std::string genBoundary();
 PyObject* genPyBoundary();
 
-class PyNetKernel : public PyCallback
+class PyNetKernel : public PyCallback, public INetKernel
 {
 public:
 	friend CacheCallbacker;
@@ -57,8 +62,7 @@ public:
 		const WCHAR* lpwszProxy, const CHAR* lpszHeader, PyObject* pPyMultiPart, DWORD dwContentLength,
 		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL);
 
-	PyObject* OpenUrl(const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL,
-		const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
+	DWORD OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
 
 	PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 		const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);

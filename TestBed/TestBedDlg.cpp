@@ -65,6 +65,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CTestBedDlg::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CTestBedDlg::OnNMClickTab1)
 END_MESSAGE_MAP()
 
 
@@ -173,7 +174,7 @@ void CTestBedDlg::InitTabCtrl(void)
 	m_dlgTabItemAry[1].MoveWindow(&rc);
 
 	m_dlgTabItemAry[0].ShowWindow(SW_SHOW);
-	m_dlgTabItemAry[0].ShowWindow(SW_HIDE);
+	m_dlgTabItemAry[1].ShowWindow(SW_HIDE);
 
 	m_ctrlTabView.SetCurSel(0);
 }
@@ -195,5 +196,12 @@ void CTestBedDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 		}
 	}
 
+	*pResult = 0;
+}
+
+
+void CTestBedDlg::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: Add your control notification handler code here
 	*pResult = 0;
 }
