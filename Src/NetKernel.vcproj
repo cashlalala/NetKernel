@@ -96,6 +96,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="move $(OutDir)\$(TargetFileName) ..\bin\Debug\$(TargetFileName)"
 			/>
 		</Configuration>
 		<Configuration

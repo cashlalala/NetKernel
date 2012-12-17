@@ -71,7 +71,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>move $(OutDir)$(TargetFileName) ..\$(TargetFileName)</Command>
+      <Command>move $(OutDir)$(TargetFileName) ..\bin\Debug\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
