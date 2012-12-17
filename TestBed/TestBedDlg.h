@@ -31,12 +31,19 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CTabCtrl m_ctrlTabView;
-	int m_nCurTabIdx;
+	/*CTabCtrl m_ctrlTabView;
+	int m_nCurTabIdx;*/
 private:
-	void InitTabCtrl(void);
-	CDialog m_dlgTabItemAry[TOTAL_TEST_FUNC_COUNT];
+	//void InitTabCtrl(void);
+	//CDialog m_dlgTabItemAry[TOTAL_TEST_FUNC_COUNT];
 public:
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	//afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	//afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedButtonOpenurl();
+	CString m_szUrl;
+	CString m_szMethod;
+	CString m_szProxy;
+	CString m_szHeader;
+	CString m_szBody;
+	UINT m_nContentLen;
 };

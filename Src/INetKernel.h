@@ -37,6 +37,4 @@ struct INetKernel
 	typedef  INetKernel* (*PFNGETINSTANCE)();
 	typedef  void (*PFNDELINSTANCE)();
 };
-typedef  INetKernel* (*PFNGETINSTANCE)();
-typedef  void (*PFNDELINSTANCE)();
 

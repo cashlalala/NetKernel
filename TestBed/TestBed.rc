@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Traditional, Taiwan) resources
+// 中文 (繁體，台灣) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
@@ -86,9 +86,21 @@ EXSTYLE WS_EX_APPWINDOW
 CAPTION "TestBed"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,269,224,50,16
-    PUSHBUTTON      "Cancel",IDCANCEL,326,224,50,16
-    CONTROL         "",IDC_TAB1,"SysTabControl32",0x0,7,7,369,200
+    GROUPBOX        "Input Params",IDC_STATIC_OPENURL_INPUTPANEL,7,7,339,165
+    CTEXT           "URL",IDC_STATIC_URL,12,24,60,14
+    EDITTEXT        IDC_EDIT_OPENURL_URL,81,20,65,19,ES_AUTOHSCROLL
+    CTEXT           "Header",IDC_STATIC,12,94,60,14
+    CTEXT           "Proxy",IDC_STATIC,12,72,60,14
+    CTEXT           "Method",IDC_STATIC,12,49,60,14
+    CTEXT           "Body",IDC_STATIC,12,116,60,14
+    CTEXT           "ContentLength",IDC_STATIC,12,137,60,14
+    EDITTEXT        IDC_EDIT_OPENURL_HEADER,81,90,65,19,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_OPENURL_PROXY,81,68,65,19,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_OPENURL_METHOD,81,45,65,19,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_OPENURL_BODY,81,112,65,19,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_OPENURL_CONTENTLEN,81,133,65,19,ES_AUTOHSCROLL
+    GROUPBOX        "Function",IDC_STATIC,217,14,151,179
+    PUSHBUTTON      "OpenUrl",IDC_BUTTON_OpenUrl,254,27,85,14
 END
 
 IDD_DIALOG_OpenUrl DIALOGEX 0, 0, 366, 207
@@ -181,6 +193,7 @@ BEGIN
         RIGHTMARGIN, 376
         TOPMARGIN, 7
         BOTTOMMARGIN, 240
+        HORZGUIDE, 41
     END
 
     IDD_DIALOG_OpenUrl, DIALOG
@@ -224,7 +237,7 @@ BEGIN
     IDS_ABOUTBOX            "&About TestBed..."
 END
 
-#endif    // Chinese (Traditional, Taiwan) resources
+#endif    // 中文 (繁體，台灣) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
