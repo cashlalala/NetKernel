@@ -2,10 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="NetKernel"
-	ProjectGUID="{EC3A9EDF-CB65-4978-A652-02D079D3291B}"
-	RootNamespace="NetKernel"
-	Keyword="Win32Proj"
+	Name="TestBed"
+	ProjectGUID="{10864524-2D55-4C87-93EC-9C635062165E}"
+	RootNamespace="TestBed"
+	Keyword="MFCProj"
 	>
 	<Platforms>
 		<Platform
@@ -18,8 +18,9 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory=".\Debug"
-			ConfigurationType="2"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -36,19 +37,18 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="false"
+				ValidateParameters="false"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="F:\KOAN\sdk\include;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Include&quot;;C:\Python\Python25x86\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_UNICODE;NETKERNEL_EXPORTS"
-				MinimalRebuild="false"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -58,19 +58,18 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Wininet.lib Urlmon.lib Shlwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="F:\KOAN\sdk\lib;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib&quot;;C:\Python\Python25x86\libs"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/_NetKernel.pdb"
 				SubSystem="2"
-				ImportLibrary=".\Debug/_NetKernel.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -96,15 +95,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="move $(OutDir)\$(TargetFileName) ..\bin\Debug\$(TargetFileName)"
-				ExcludedFromBuild="true"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
-			ConfigurationType="2"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -122,16 +120,16 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="false"
+				ValidateParameters="false"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../koan/include;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;NETKERNEL_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				MinimalRebuild="false"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -141,22 +139,20 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Wininet.lib Urlmon.lib Shlwapi.lib"
-				OutputFile="../_NetKernel.pyd"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../koan/Lib;"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="..\Internal_Only\$(TargetName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary=".\Release/_NetKernel.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -194,24 +190,36 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\Utility\Debug.cpp"
+				RelativePath=".\DlgOpenUrl.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NetKernel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NetKernel_wrap.cxx"
+				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\TestBed.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestBedDlg.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
@@ -220,11 +228,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\Utility\Debug.h"
+				RelativePath=".\DlgOpenUrl.h"
 				>
 			</File>
 			<File
-				RelativePath=".\NetKernel.h"
+				RelativePath="..\Src\NetKernel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestBed.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestBedDlg.h"
 				>
 			</File>
 		</Filter>
@@ -233,33 +257,28 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\res\TestBed.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\TestBed.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TestBed.rc2"
+				>
+			</File>
 		</Filter>
 		<File
-			RelativePath=".\NetKernel.i"
+			RelativePath=".\ReadMe.txt"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="swig-1_3_31 -c++ -python -modern -shadow &quot;$(InputPath)&quot;&#x0D;&#x0A;copy &quot;$(InputName)&quot;.py ..&#x0D;&#x0A;"
-					AdditionalDependencies="NetKernel.h;"
-					Outputs="$(InputName)_wrap.cxx"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="swig-1_3_31 -c++ -python -modern -shadow &quot;$(InputPath)&quot;&#x0D;&#x0A;copy &quot;$(InputName)&quot;.py ..&#x0D;&#x0A;"
-					AdditionalDependencies="NetKernel.h;"
-					Outputs="$(InputName)_wrap.cxx"
-				/>
-			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="TestBed.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
