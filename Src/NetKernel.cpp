@@ -1073,6 +1073,11 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
 	httpResp.strResponse.assign(pResBuffer,dwAvailableData);
+	if (pResBuffer)
+	{
+		delete [] pResBuffer;
+		pResBuffer = NULL;
+	}
 	return dwError;
 	//PyObject* pRet = NULL;
 	//if(m_bForceClose)
@@ -1086,11 +1091,6 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 	//else
 	//	pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, "", 0);
 
-	//if (pResBuffer)
-	//{
-	//	delete [] pResBuffer;
-	//	pResBuffer = NULL;
-	//}
 	//return pRet;
 }
 

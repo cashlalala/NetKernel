@@ -54,6 +54,7 @@ CTestBedDlg::CTestBedDlg(CWnd* pParent /*=NULL*/)
 	, m_szHeader(_T(""))
 	, m_szBody(_T(""))
 	, m_nContentLen(0)
+	, m_szOutput(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -68,6 +69,7 @@ void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_OPENURL_HEADER, m_szHeader);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_BODY, m_szBody);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_CONTENTLEN, m_nContentLen);
+	DDX_Text(pDX, IDC_EDIT_OUTPUT, m_szOutput);
 }
 
 BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
@@ -112,7 +114,7 @@ BOOL CTestBedDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	//this->InitTabCtrl();
-	this->UpdateData(TRUE);
+	this->UpdateData(FALSE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -220,6 +222,14 @@ void CTestBedDlg::OnBnClickedButtonOpenurl()
 	HttpResponse httpResp;
 	const wchar_t* lpszUrl = (LPCTSTR)m_szUrl;
 	char* lpszUrlTmp = new char[m_szUrl.GetLength()+1];
+
 	WideCharToMultiByte(CP_ACP,NULL,lpszUrl,-1,lpszUrlTmp,m_szUrl.GetLength()+1,0,0);
+
 	((CTestBedApp*)AfxGetApp())->m_pNetKernel->OpenUrl(httpResp, lpszUrlTmp);
+
+	CString szResp(httpResp.strResponse.c_str());
+	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
+	delete[] lpszUrlTmp;
+
+	UpdateData(FALSE);
 }

@@ -46,4 +46,5 @@ public:
 	CString m_szHeader;
 	CString m_szBody;
 	UINT m_nContentLen;
+	CString m_szOutput;
 };
