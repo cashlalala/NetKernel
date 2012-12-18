@@ -24,7 +24,6 @@ class PyNetKernel;
 #endif
 
 extern "C" __declspec(dllexport) INetKernel* GetNetKernelInstance();
-extern "C" __declspec(dllexport) void DelInstance();
 
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
@@ -33,14 +32,13 @@ PyObject* genPyBoundary();
 
 class PyNetKernel : public PyCallback, public INetKernel
 {
-protected:
-	PyNetKernel();
-	virtual ~PyNetKernel();
-
 public:
 	friend CacheCallbacker;
+	
+	//static PyNetKernel* m_pInstance;
 
-	static INetKernel& GetInstance();
+	PyNetKernel();
+	virtual ~PyNetKernel();
 
 	void SetCallback(PyObject* callback);
 

@@ -3,17 +3,39 @@
 #include <string>
 #include <vector>
 
-struct HttpResponse
+
+class HttpResponse
 {
-	HttpResponse()
+public:
+	inline HttpResponse()
 	{
 		dwError = 0;
 		dwStatusCode = 0;
-		strResponse.clear();
+		strResponse = NULL;
 	}
-	DWORD dwError;
+	inline ~HttpResponse()
+	{
+		if (strResponse) delete[] strResponse;
+		strResponse = NULL;
+	}
+
+	inline void SetRespViaStdStr(std::string szStr)
+	{
+		if (szStr.length()==0) return;
+		if (strResponse) delete[] strResponse;
+		strResponse = new char[szStr.size()];
+		strcpy_s(strResponse,szStr.size(),szStr.c_str());
+	}
+
+	inline void SetRespViaCharPtr(char* lpcChar)
+	{
+		if (strResponse) delete[] strResponse;
+		strResponse = lpcChar;
+	}
+
 	DWORD dwStatusCode;
-	std::string strResponse;
+	char* strResponse;
+	DWORD dwError;
 };
 
 // Structure for file send request.
@@ -21,9 +43,6 @@ struct MultiPartInfo
 {
 	MultiPartInfo()
 	{
-		filePath.clear();
-		content.clear();
-		header.clear();
 		dwFileSize = 0;
 	}
 	std::wstring filePath;	// Full file path.

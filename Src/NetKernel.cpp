@@ -231,7 +231,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApNam
 		BOOL bUseProxy = FALSE;
 		do 
 		{
-			bRequestSent = SendHttpReq(m_hRequest, bUseProxy, lpszHeader, (LPVOID)lpBody, dwLength, dwStatusCode);
+			bRequestSent = SendHttpReq(m_hRequest, bUseProxy, lpszHeader, (LPVOID)(lpBody)?lpBody:"", dwLength, dwStatusCode);
 			if(bRequestSent && !bUseProxy && dwStatusCode == HTTP_STATUS_PROXY_AUTH_REQ)
 			{
 				bUseProxy = TRUE;
@@ -259,7 +259,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApNam
 	//PYAUTO_LOCK
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse = strServerResponse;
+	httpResp.SetRespViaStdStr(strServerResponse);
 	return dwError;
 	
 	//if(m_bForceClose)
@@ -772,7 +772,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* 
 	{
 		httpResp.dwError = 0;
 		httpResp.dwStatusCode = dwStatusCode;
-		httpResp.strResponse = strServerResponse;
+		httpResp.SetRespViaStdStr(strServerResponse);
 		return 0;
 		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
 	}
@@ -780,7 +780,6 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* 
 	{
 		httpResp.dwError = ERROR_PROCESS;
 		httpResp.dwStatusCode = 0;
-		httpResp.strResponse.clear();
 		return ERROR_PROCESS;
 		//return Py_BuildValue("iis", ERROR_PROCESS, 0, "");
 	}
@@ -788,7 +787,6 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* 
 	{
 		httpResp.dwError = dwError;
 		httpResp.dwStatusCode = dwStatusCode;
-		httpResp.strResponse.clear();
 		return dwError;
 		//return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
 	}
@@ -1105,12 +1103,9 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse.assign(pResBuffer,dwAvailableData);
-	if (pResBuffer)
-	{
-		delete [] pResBuffer;
-		pResBuffer = NULL;
-	}
+	httpResp.SetRespViaCharPtr(pResBuffer);
+	pResBuffer = NULL;
+	//httpResp.strResponse = new std::string(pResBuffer,dwAvailableData);
 	return dwError;
 	//PyObject* pRet = NULL;
 	//if(m_bForceClose)
@@ -1410,13 +1405,6 @@ void PyNetKernel::SetHaveRegToOLREG()
 	}
 }
 
-INetKernel& PyNetKernel::GetInstance()
-{
-	static PyNetKernel pyNetKernel;
-	return pyNetKernel;
-}
-
-
 HRESULT CacheCallbacker::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR szStatusText)
 {
 	if (!m_pNetKernel)
@@ -1438,10 +1426,22 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
+//PyNetKernel* PyNetKernel::m_pInstance = new PyNetKernel();
+
 INetKernel* GetNetKernelInstance()
 {
-	return &PyNetKernel::GetInstance();
+	static PyNetKernel pyNetKernel;
+	return &pyNetKernel;
 }
+
+//void DeleteInstance()
+//{
+//	if (PyNetKernel::m_pInstance)
+//	{
+//		delete PyNetKernel::m_pInstance;
+//		PyNetKernel::m_pInstance = NULL;
+//	}
+//}
 
 #ifdef _MANAGED
 #pragma managed(pop)
