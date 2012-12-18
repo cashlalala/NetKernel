@@ -1,5 +1,17 @@
 #pragma once
 
+/********************************************************************
+	created:	2012/12/18
+	created:	18:12:2012   17:26
+	filename: 	F:\power2go9\subsys\NetKernel\Src\INetKernel.h
+	file path:	F:\power2go9\subsys\NetKernel\Src
+	file base:	INetKernel
+	file ext:	h
+	author:		Cash_Chang
+	dependency: VC9.0
+	purpose:	
+*********************************************************************/
+
 #include <string>
 #include <vector>
 
@@ -23,8 +35,9 @@ public:
 	{
 		if (szStr.length()==0) return;
 		if (strResponse) delete[] strResponse;
-		strResponse = new char[szStr.size()];
-		strcpy_s(strResponse,szStr.size(),szStr.c_str());
+		strResponse = new char[szStr.size()+1];
+		memset(strResponse,0x0,szStr.size()+1);
+		strcpy_s(strResponse,szStr.size()+1,szStr.c_str());
 	}
 
 	inline void SetRespViaCharPtr(char* lpcChar)
@@ -37,6 +50,21 @@ public:
 	char* strResponse;
 	DWORD dwError;
 };
+
+
+struct UriValueObject
+{
+	UriValueObject()
+	{
+		bSecure = FALSE;
+		dwPort = 0;
+	}
+	std::string strUrl; 
+	BOOL bSecure;
+	std::string strHost; 
+	DWORD dwPort;
+};
+
 
 // Structure for file send request.
 struct MultiPartInfo
@@ -80,6 +108,9 @@ struct INetKernel
 
 	virtual void ForceStop() = 0;
 	virtual void SetDownloadCache(BOOL bCacheDownload) = 0;
+
+	virtual BOOL ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO) = 0;
+
 
 	typedef  INetKernel* (*PFNGETINSTANCE)();
 	typedef  void (*PFNDELINSTANCE)();

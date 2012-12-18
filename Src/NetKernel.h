@@ -61,6 +61,8 @@ public:
 
 	PyObject* ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse = NULL);
 
+	BOOL ResolveUrl(const CHAR* lpszUrl, UriValueObject& cUriVO);
+
 	enum DEL_CACHE_TYPE
 	{
 		File,

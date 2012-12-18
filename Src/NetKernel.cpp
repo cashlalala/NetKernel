@@ -100,6 +100,26 @@ void dump(std::string desc, const char* lpszHeader, std::vector<MultiPartInfo>& 
 	}
 }
 
+inline std::string genBoundary()
+{
+	// Boundary in header:	"somestring"
+	// Boundary in body:	"--somestring"
+
+	srand(static_cast<int>(time(NULL)));
+	std::string boundary = "----------";
+	for(int i=0; i<15; ++i)
+		boundary += static_cast<char>(rand() % 26) + 'A';
+	boundary += "\r\n";
+	return boundary;
+}
+
+
+PyObject* genPyBoundary()
+{
+	std::string boundary = genBoundary();
+	return Py_BuildValue("s", boundary.substr(0, boundary.length() - 2).c_str());
+}
+
 
 BOOL ResolveUri(const CHAR* lpszUri, std::string& strUrl, BOOL& bSecure, std::string& strHost, DWORD& dwPort)
 {
@@ -148,27 +168,6 @@ BOOL ResolveUri(const CHAR* lpszUri, std::string& strUrl, BOOL& bSecure, std::st
 	}
 
 	return TRUE;
-}
-
-
-inline std::string genBoundary()
-{
-	// Boundary in header:	"somestring"
-	// Boundary in body:	"--somestring"
-
-	srand(static_cast<int>(time(NULL)));
-	std::string boundary = "----------";
-	for(int i=0; i<15; ++i)
-		boundary += static_cast<char>(rand() % 26) + 'A';
-	boundary += "\r\n";
-	return boundary;
-}
-
-
-PyObject* genPyBoundary()
-{
-	std::string boundary = genBoundary();
-	return Py_BuildValue("s", boundary.substr(0, boundary.length() - 2).c_str());
 }
 
 
@@ -1403,6 +1402,12 @@ void PyNetKernel::SetHaveRegToOLREG()
 		if (ProcessInfo.hThread)
 			CloseHandle(ProcessInfo.hThread);
 	}
+}
+
+
+BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO)
+{
+	return ResolveUri(lpszUri, cUriVO.strUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
 }
 
 HRESULT CacheCallbacker::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR szStatusText)
