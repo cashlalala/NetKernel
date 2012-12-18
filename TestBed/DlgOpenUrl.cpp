@@ -57,7 +57,7 @@ void CDlgOpenUrl::OnBnClickedButtonSend()
 	const wchar_t* lpszUrl = (LPCTSTR)m_szUrl;
 	char* lpszUrlTmp = new char[m_szUrl.GetLength()+1];
 	WideCharToMultiByte(CP_ACP,NULL,lpszUrl,sizeof(lpszUrl),lpszUrlTmp,m_szUrl.GetLength()+1,0,0);
-	((CTestBedApp*)AfxGetApp())->m_pNetKernel->OpenUrl(httpResp, lpszUrlTmp);
+	((CTestBedApp*)AfxGetApp())->m_pNetKernel.OpenUrl(httpResp, lpszUrlTmp);
 }
 
 

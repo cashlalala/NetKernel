@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TestBed.h"
 #include "TestBedDlg.h"
+#include <WinInet.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -49,14 +50,16 @@ END_MESSAGE_MAP()
 CTestBedDlg::CTestBedDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CTestBedDlg::IDD, pParent)
 	, m_szUrl(_T("http://www.google.com"))
-	, m_szMethod(_T(""))
+	, m_szMethod(_T("GET"))
 	, m_szProxy(_T(""))
 	, m_szHeader(_T(""))
 	, m_szBody(_T(""))
 	, m_nContentLen(0)
 	, m_szOutput(_T(""))
+	, m_nPort((int)INTERNET_DEFAULT_HTTP_PORT)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_pNetKernel = ((CTestBedApp*)AfxGetApp())->m_pNetKernel;
 }
 
 void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
@@ -70,6 +73,7 @@ void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_OPENURL_BODY, m_szBody);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_CONTENTLEN, m_nContentLen);
 	DDX_Text(pDX, IDC_EDIT_OUTPUT, m_szOutput);
+	DDX_Text(pDX, IDC_EDIT_OPENURL_CONTENTLEN2, m_nPort);
 }
 
 BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
@@ -80,6 +84,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	//ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CTestBedDlg::OnTcnSelchangeTab1)
 	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &CTestBedDlg::OnNMClickTab1)
 	ON_BN_CLICKED(IDC_BUTTON_OpenUrl, &CTestBedDlg::OnBnClickedButtonOpenurl)
+	ON_BN_CLICKED(IDC_BUTTON_SendHttpRequest, &CTestBedDlg::OnBnClickedButtonSendhttprequest)
 END_MESSAGE_MAP()
 
 
@@ -218,18 +223,44 @@ HCURSOR CTestBedDlg::OnQueryDragIcon()
 
 void CTestBedDlg::OnBnClickedButtonOpenurl()
 {
+	UpdateData(TRUE);
 	// TODO: 在此加入控制項告知處理常式程式碼
+	HttpResponse httpResp;
+
+	m_pNetKernel->OpenUrl(httpResp, CT2CA(m_szUrl),CT2CA(m_szMethod));
+
+	CString szResp(httpResp.strResponse);
+	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
+
+	UpdateData(FALSE);
+}
+
+
+void CTestBedDlg::OnBnClickedButtonSendhttprequest()
+{
+	UpdateData(TRUE);
+	// TODO: Add your control notification handler code here
 	HttpResponse httpResp;
 	const wchar_t* lpszUrl = (LPCTSTR)m_szUrl;
 	char* lpszUrlTmp = new char[m_szUrl.GetLength()+1];
 
 	WideCharToMultiByte(CP_ACP,NULL,lpszUrl,-1,lpszUrlTmp,m_szUrl.GetLength()+1,0,0);
 
-	((CTestBedApp*)AfxGetApp())->m_pNetKernel->OpenUrl(httpResp, lpszUrlTmp);
+	UriValueObject cUriVO;
+	m_pNetKernel->ResolveUrl(lpszUrlTmp,cUriVO);
 
-	CString szResp(httpResp.strResponse.c_str());
+	m_pNetKernel->SendHttpRequest(httpResp,
+														"NetKernelTestBed",
+														CStringA(m_szMethod),
+														cUriVO.strHost.c_str(),
+														m_nPort,FALSE, 
+														cUriVO.strUrl.c_str(),
+														CStringA(m_szHeader));
+
+	CString szResp(httpResp.strResponse);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 	delete[] lpszUrlTmp;
 
 	UpdateData(FALSE);
+
 }

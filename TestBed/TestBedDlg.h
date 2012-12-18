@@ -47,4 +47,9 @@ public:
 	CString m_szBody;
 	UINT m_nContentLen;
 	CString m_szOutput;
+	afx_msg void OnBnClickedButtonSendhttprequest();
+private:
+	INetKernel* m_pNetKernel;
+public:
+	UINT m_nPort;
 };

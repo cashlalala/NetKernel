@@ -18,13 +18,17 @@
 #define IDC_EDIT_OPENURL_BODY           1006
 #define IDC_EDIT_OPENURL_CONTENTLEN     1007
 #define IDC_STATIC_URL                  1008
+#define IDC_EDIT_OPENURL_CONTENTLEN2    1009
 #define IDC_BUTTON_SEND                 1010
 #define IDC_BUTTON2                     1011
 #define IDC_BUTTON_OpenUrl              1012
 #define IDC_EDIT1                       1013
 #define IDC_EDIT_OUTPUT                 1013
-#define IDC_BUTTON1                     1014
-#define IDC_BUTTON_SEND_HTTP            1014
+#define IDC_BUTTON_SendHttpRequest      1014
+#define IDC_BUTTON_DeleteUrlCache       1015
+#define IDC_BUTTON_ForceStop            1016
+#define IDC_BUTTON_SetDownloadCache     1017
+#define IDC_BUTTON_SendHttpRequestMultipart 1018
 
 // Next default values for new objects
 // 
@@ -32,7 +36,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1017
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

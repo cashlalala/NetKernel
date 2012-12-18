@@ -84,6 +84,6 @@ BOOL CTestBedApp::InitInstance()
 int CTestBedApp::ExitInstance()
 {
 	// TODO: Add your specialized code here and/or call the base class
-	m_NetKernelLoader.DelInstance();
+	/*m_NetKernelLoader.DelInstance();*/
 	return CWinApp::ExitInstance();
 }

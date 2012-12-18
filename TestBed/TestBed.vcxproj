@@ -118,7 +118,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Utility\Debug.cpp" />
-    <ClCompile Include="DlgOpenUrl.cpp" />
     <ClCompile Include="NetKernelLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -128,7 +127,6 @@
     <ClCompile Include="TestBedDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DlgOpenUrl.h" />
     <ClInclude Include="NetKernelLoader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
