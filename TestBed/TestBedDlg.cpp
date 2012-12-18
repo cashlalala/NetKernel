@@ -85,6 +85,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &CTestBedDlg::OnNMClickTab1)
 	ON_BN_CLICKED(IDC_BUTTON_OpenUrl, &CTestBedDlg::OnBnClickedButtonOpenurl)
 	ON_BN_CLICKED(IDC_BUTTON_SendHttpRequest, &CTestBedDlg::OnBnClickedButtonSendhttprequest)
+	ON_EN_CHANGE(IDC_EDIT_OPENURL_BODY, &CTestBedDlg::OnEnChangeEditOpenurlBody)
 END_MESSAGE_MAP()
 
 
@@ -264,3 +265,20 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 	UpdateData(FALSE);
 
 }
+
+
+void CTestBedDlg::OnEnChangeEditOpenurlBody()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	UpdateData(TRUE);
+	GetDlgItem(IDC_EDIT_OPENURL_BODY)->SetFocus();
+	m_nContentLen = m_szBody.GetLength();
+
+	UpdateData(FALSE);
+}
+

@@ -52,4 +52,5 @@ private:
 	INetKernel* m_pNetKernel;
 public:
 	UINT m_nPort;
+	afx_msg void OnEnChangeEditOpenurlBody();
 };
