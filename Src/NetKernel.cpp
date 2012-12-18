@@ -1072,7 +1072,8 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 				HANDLE hFile = CreateFile(pwszFilename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 				if(hFile == INVALID_HANDLE_VALUE) break;
 				dwAvailableData = GetFileSize(hFile, NULL);
-				pResBuffer = new char[dwAvailableData];
+				pResBuffer = new char[dwAvailableData+1];
+				memset(pResBuffer,0x0,dwAvailableData+1);
 				DWORD dwFileRead = 0, dwTotalRead = 0;
 				while(dwTotalRead < dwAvailableData)
 				{

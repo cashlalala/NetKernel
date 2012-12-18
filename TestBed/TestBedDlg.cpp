@@ -67,13 +67,14 @@ void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//DDX_Control(pDX, IDC_TAB1, m_ctrlTabView);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_URL, m_szUrl);
-	DDX_Text(pDX, IDC_EDIT_OPENURL_METHOD, m_szMethod);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_PROXY, m_szProxy);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_HEADER, m_szHeader);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_BODY, m_szBody);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_CONTENTLEN, m_nContentLen);
 	DDX_Text(pDX, IDC_EDIT_OUTPUT, m_szOutput);
 	DDX_Text(pDX, IDC_EDIT_OPENURL_CONTENTLEN2, m_nPort);
+	DDX_Control(pDX, IDC_COMBO_METHOD, m_ctrlComboMethod);
+	DDX_Text(pDX, IDC_COMBO_METHOD, m_szMethod);
 }
 
 BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
@@ -86,6 +87,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_OpenUrl, &CTestBedDlg::OnBnClickedButtonOpenurl)
 	ON_BN_CLICKED(IDC_BUTTON_SendHttpRequest, &CTestBedDlg::OnBnClickedButtonSendhttprequest)
 	ON_EN_CHANGE(IDC_EDIT_OPENURL_BODY, &CTestBedDlg::OnEnChangeEditOpenurlBody)
+	ON_CBN_SELCHANGE(IDC_COMBO_METHOD, &CTestBedDlg::OnCbnSelchangeComboMethod)
 END_MESSAGE_MAP()
 
 
@@ -120,6 +122,7 @@ BOOL CTestBedDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	//this->InitTabCtrl();
+
 	this->UpdateData(FALSE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -228,10 +231,12 @@ void CTestBedDlg::OnBnClickedButtonOpenurl()
 	// TODO: 在此加入控制項告知處理常式程式碼
 	HttpResponse httpResp;
 
-	m_pNetKernel->OpenUrl(httpResp, CT2CA(m_szUrl),CT2CA(m_szMethod));
+	m_pNetKernel->OpenUrl(httpResp, CT2CA(m_szUrl),CT2CA(m_szMethod),0,CT2CA(m_szHeader),0,CT2CA(m_szBody),m_szBody.GetLength());
 
-	CString szResp(httpResp.strResponse);
-	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
+	CString szResp(httpResp.strResponse,strlen(httpResp.strResponse));
+	OutputDebugStringA(httpResp.strResponse);
+	OutputDebugString(szResp);
+	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 
 	UpdateData(FALSE);
 }
@@ -242,25 +247,20 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 	UpdateData(TRUE);
 	// TODO: Add your control notification handler code here
 	HttpResponse httpResp;
-	const wchar_t* lpszUrl = (LPCTSTR)m_szUrl;
-	char* lpszUrlTmp = new char[m_szUrl.GetLength()+1];
-
-	WideCharToMultiByte(CP_ACP,NULL,lpszUrl,-1,lpszUrlTmp,m_szUrl.GetLength()+1,0,0);
 
 	UriValueObject cUriVO;
-	m_pNetKernel->ResolveUrl(lpszUrlTmp,cUriVO);
+	m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
 
 	m_pNetKernel->SendHttpRequest(httpResp,
 														"NetKernelTestBed",
-														CStringA(m_szMethod),
+														CT2CA(m_szMethod),
 														cUriVO.strHost.c_str(),
 														m_nPort,FALSE, 
 														cUriVO.strUrl.c_str(),
-														CStringA(m_szHeader));
+														CT2CA(m_szHeader),CT2CA(m_szBody));
 
 	CString szResp(httpResp.strResponse);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
-	delete[] lpszUrlTmp;
 
 	UpdateData(FALSE);
 
@@ -282,3 +282,26 @@ void CTestBedDlg::OnEnChangeEditOpenurlBody()
 	UpdateData(FALSE);
 }
 
+
+
+void CTestBedDlg::OnCbnSelchangeComboMethod()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	UpdateData(TRUE);
+
+	//int nCurItem = m_ctrlComboMethod.GetCurSel();
+	if (_T("POST") == m_szMethod)
+	{
+		m_szUrl = _T("http://www.google.com");
+	}
+	else if (_T("GET")==m_szMethod)
+	{
+		m_szUrl = _T("https://posttestserver.com/post.php");
+	}
+	else
+	{
+		m_szUrl = _T("http://www.google.com");
+	}
+	
+	UpdateData(FALSE);
+}

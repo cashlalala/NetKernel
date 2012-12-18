@@ -3,6 +3,7 @@
 
 #pragma once
 #include "afxcmn.h"
+#include "afxwin.h"
 
 #define TOTAL_TEST_FUNC_COUNT 2
 
@@ -53,4 +54,6 @@ private:
 public:
 	UINT m_nPort;
 	afx_msg void OnEnChangeEditOpenurlBody();
+	CComboBox m_ctrlComboMethod;
+	afx_msg void OnCbnSelchangeComboMethod();
 };

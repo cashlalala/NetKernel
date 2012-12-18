@@ -7,3 +7,5 @@
 *.sdf
 Debug
 ipch
+
+*.aps

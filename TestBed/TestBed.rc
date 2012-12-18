@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Traditional, Taiwan) resources
+// 中文 (繁體，台灣) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
@@ -92,11 +92,9 @@ BEGIN
     CTEXT           "Header",IDC_STATIC,12,94,60,14
     CTEXT           "Proxy",IDC_STATIC,12,72,60,14
     CTEXT           "Method",IDC_STATIC,12,49,60,14
-    CTEXT           "Body",IDC_STATIC,12,116,60,14
     CTEXT           "ContentLength",IDC_STATIC,12,137,60,14
-    EDITTEXT        IDC_EDIT_OPENURL_HEADER,81,90,275,19,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN
+    EDITTEXT        IDC_EDIT_OPENURL_HEADER,81,90,275,40,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
     EDITTEXT        IDC_EDIT_OPENURL_PROXY,81,68,275,19,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_OPENURL_METHOD,81,45,275,19,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_OPENURL_BODY,369,23,262,182,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL,WS_EX_ACCEPTFILES
     EDITTEXT        IDC_EDIT_OPENURL_CONTENTLEN,81,132,87,19,ES_AUTOHSCROLL
     GROUPBOX        "Function",IDC_STATIC,7,222,161,148
@@ -111,6 +109,7 @@ BEGIN
     CTEXT           "Port",IDC_STATIC,12,159,60,14
     EDITTEXT        IDC_EDIT_OPENURL_CONTENTLEN2,81,154,87,19,ES_AUTOHSCROLL
     GROUPBOX        "Body",IDC_STATIC,363,12,274,195
+    COMBOBOX        IDC_COMBO_METHOD,80,51,88,22,CBS_DROPDOWN | CBS_SORT | CBS_UPPERCASE | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_DIALOG_OpenUrl DIALOGEX 0, 0, 366, 207
@@ -255,6 +254,21 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog Info
+//
+
+IDD_TESTBED_DIALOG DLGINIT
+BEGIN
+    IDC_COMBO_METHOD, 0x403, 4, 0
+0x4547, 0x0054, 
+    IDC_COMBO_METHOD, 0x403, 5, 0
+0x4f50, 0x5453, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -263,7 +277,7 @@ BEGIN
     IDS_ABOUTBOX            "&About TestBed..."
 END
 
-#endif    // Chinese (Traditional, Taiwan) resources
+#endif    // 中文 (繁體，台灣) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
