@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Taiwan) resources
+// Chinese (Traditional, Taiwan) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
-#ifdef _WIN32
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
 #pragma code_page(950)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -104,6 +102,7 @@ BEGIN
     GROUPBOX        "Function",IDC_STATIC,7,222,161,148
     PUSHBUTTON      "OpenUrl",IDC_BUTTON_OpenUrl,21,238,49,14
     EDITTEXT        IDC_EDIT_OUTPUT,177,228,277,142,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL,WS_EX_ACCEPTFILES
+    PUSHBUTTON      "Button1",IDC_BUTTON_SEND_HTTP,21,259,48,12
 END
 
 IDD_DIALOG_OpenUrl DIALOGEX 0, 0, 366, 207
@@ -180,7 +179,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -247,12 +246,12 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "&About TestBed..."
 END
 
-#endif    // Chinese (Taiwan) resources
+#endif    // Chinese (Traditional, Taiwan) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

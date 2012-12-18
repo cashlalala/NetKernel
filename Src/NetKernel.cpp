@@ -198,16 +198,16 @@ void PyNetKernel::SetCallback(PyObject* callback)
 
 
 // Send text body request.
-PyObject* PyNetKernel::SendHttpRequest(const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
+DWORD PyNetKernel::SendHttpRequest(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
 	BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
-	return SendHttpContent(lpszApName, lpszMethod, lpszServer, wPort, bSecure, lpszUrl, lpszHeader,
+	return SendHttpContent(httpResp, lpszApName, lpszMethod, lpszServer, wPort, bSecure, lpszUrl, lpszHeader,
 		(CHAR*)lpszBody, lpszBody ? static_cast<DWORD>(strlen(lpszBody)) : 0, lpwszResponse, lpwszDump);
 }
 
 
 // The function to do all send data jobs.
-PyObject* PyNetKernel::SendHttpContent(const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 	DWORD dwPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader,
 	const CHAR* lpBody, DWORD dwLength, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -219,7 +219,7 @@ PyObject* PyNetKernel::SendHttpContent(const CHAR* lpszApName, const CHAR* lpszM
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 
-	PYAUTO_UNLOCK
+	//PYAUTO_UNLOCK
 	do{
 		if(!PrepareConnection(m_hInternet, m_hConnect, m_hRequest, lpszApName, lpszMethod, lpszServer, dwPort, bSecure, lpszUrl))
 			continue;
@@ -256,15 +256,19 @@ PyObject* PyNetKernel::SendHttpContent(const CHAR* lpszApName, const CHAR* lpszM
 	// Close all handles.
 	CloseInternetHandle(m_hRequest, m_hConnect,  m_hInternet);
 
-	PYAUTO_LOCK
+	//PYAUTO_LOCK
+	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
+	httpResp.dwStatusCode = dwStatusCode;
+	httpResp.strResponse = strServerResponse;
+	return dwError;
+	
+	//if(m_bForceClose)
+	//	return Py_BuildValue("iis", (int)ERROR_FORCECCLOSE, (int)dwStatusCode, "");
 
-	if(m_bForceClose)
-		return Py_BuildValue("iis", (int)ERROR_FORCECCLOSE, (int)dwStatusCode, "");
-
-	if(bSuccess)
-		return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
-	else
-		return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
+	//if(bSuccess)
+	//	return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
+	//else
+	//	return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
 }
 
 
@@ -627,8 +631,8 @@ BOOL PyNetKernel::WriteMultipartBody(HINTERNET& hRequest, std::vector<MultiPartI
 //
 // The parameters above must give, even the data is empty, caller should give like: 'filename':u''
 //
-PyObject* PyNetKernel::SendHttpRequestMultipart(const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
-	const WCHAR* lpwszProxy, const CHAR* lpszHeader, PyObject* pPyMultiPart, DWORD dwContentLength,
+DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+	const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 	const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
 	std::string strUrl;
@@ -646,64 +650,64 @@ PyObject* PyNetKernel::SendHttpRequestMultipart(const CHAR* lpszApName, const CH
 
 	dprintf(L"[NetKernel] Read the multipart list.");
 	// This callback called before unlock, so do not use OnStateCallback.
-	CallBackAsLong("sii", "prepare", 0, 0);
+	//CallBackAsLong("sii", "prepare", 0, 0);
 
 	// Read all multi part informations.
-	int nTotalMultiPart = static_cast<int>(PyObject_Size(pPyMultiPart));
-	for(int i=0; i<nTotalMultiPart; ++i)
-	{
-		MultiPartInfo info;
+	//int nTotalMultiPart = static_cast<int>(PyObject_Size(pPyMultiPart));
+	//for(int i=0; i<nTotalMultiPart; ++i)
+	//{
+	//	MultiPartInfo info;
 
-		wchar_t* lpwszFilePath = NULL;
-		PyObject* pPyIndex = Py_BuildValue("i", i);
+	//	wchar_t* lpwszFilePath = NULL;
+	//	PyObject* pPyIndex = Py_BuildValue("i", i);
 
-		PyObject* pPyMultiPartItem = PyObject_GetItem(pPyMultiPart, pPyIndex);
-		Py_XDECREF(pPyIndex);
+	//	PyObject* pPyMultiPartItem = PyObject_GetItem(pPyMultiPart, pPyIndex);
+	//	Py_XDECREF(pPyIndex);
 
-		// Read the header.
-		PyObject* pPyHeader = PyDict_GetItemString(pPyMultiPartItem, "header");
-		if(pPyHeader)
-			info.header = PyString_AsString(pPyHeader);
+	//	// Read the header.
+	//	PyObject* pPyHeader = PyDict_GetItemString(pPyMultiPartItem, "header");
+	//	if(pPyHeader)
+	//		info.header = PyString_AsString(pPyHeader);
 
-		// Read the size of file.
-		PyObject* pFileSize = PyDict_GetItemString(pPyMultiPartItem, "filesize");
-		if(pFileSize)
-			info.dwFileSize = PyInt_AsLong(pFileSize);
+	//	// Read the size of file.
+	//	PyObject* pFileSize = PyDict_GetItemString(pPyMultiPartItem, "filesize");
+	//	if(pFileSize)
+	//		info.dwFileSize = PyInt_AsLong(pFileSize);
 
-		// Read the file name. Should be Unicode string.
-		PyObject* pPyFilename = PyDict_GetItemString(pPyMultiPartItem, "filename");
-		if(pPyFilename)
-		{
-			PyObject* pUnicodeObj = PyUnicode_FromObject(pPyFilename);
-			size_t nNameBufSize = PyUnicode_GetSize(pUnicodeObj);
-			wchar_t* lpwszNameBuf = new wchar_t[nNameBufSize + 1];
-			size_t nReadSize = PyUnicode_AsWideChar((PyUnicodeObject*)pUnicodeObj, lpwszNameBuf, nNameBufSize);
-			lpwszNameBuf[nReadSize < nNameBufSize ? nReadSize : nNameBufSize] = 0;
-			info.filePath = lpwszNameBuf;
-			delete [] lpwszNameBuf;
+	//	// Read the file name. Should be Unicode string.
+	//	PyObject* pPyFilename = PyDict_GetItemString(pPyMultiPartItem, "filename");
+	//	if(pPyFilename)
+	//	{
+	//		PyObject* pUnicodeObj = PyUnicode_FromObject(pPyFilename);
+	//		size_t nNameBufSize = PyUnicode_GetSize(pUnicodeObj);
+	//		wchar_t* lpwszNameBuf = new wchar_t[nNameBufSize + 1];
+	//		size_t nReadSize = PyUnicode_AsWideChar((PyUnicodeObject*)pUnicodeObj, lpwszNameBuf, nNameBufSize);
+	//		lpwszNameBuf[nReadSize < nNameBufSize ? nReadSize : nNameBufSize] = 0;
+	//		info.filePath = lpwszNameBuf;
+	//		delete [] lpwszNameBuf;
 
-			dprintf(L"[NetKernel] File name: %s", info.filePath.c_str());
-		}
+	//		dprintf(L"[NetKernel] File name: %s", info.filePath.c_str());
+	//	}
 
-		// Read content.
-		PyObject* pPyContent = PyDict_GetItemString(pPyMultiPartItem, "content");
-		if(pPyContent)
-		{
-			char* pContentBuffer = NULL;
-			Py_ssize_t contentSize = PyString_Size(pPyContent);
-			int nSize = PyString_AsStringAndSize(pPyContent, &pContentBuffer, &contentSize);
-			std::string strContent(pContentBuffer, size_t(contentSize));
-			info.content.swap(strContent);
-		}
+	//	// Read content.
+	//	PyObject* pPyContent = PyDict_GetItemString(pPyMultiPartItem, "content");
+	//	if(pPyContent)
+	//	{
+	//		char* pContentBuffer = NULL;
+	//		Py_ssize_t contentSize = PyString_Size(pPyContent);
+	//		int nSize = PyString_AsStringAndSize(pPyContent, &pContentBuffer, &contentSize);
+	//		std::string strContent(pContentBuffer, size_t(contentSize));
+	//		info.content.swap(strContent);
+	//	}
 
-		infoList.push_back(info);
-	}
+	//	infoList.push_back(info);
+	//}
 
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 	BOOL bSuccess = FALSE;
 
-	PYAUTO_UNLOCK
+	//PYAUTO_UNLOCK
 	do{
 		if(!PrepareConnection(m_hInternet, m_hConnect, m_hRequest, lpszApName, lpszMethod, strHost.c_str(), dwPort, bSecure, strUrl.c_str()))
 			continue;
@@ -754,17 +758,46 @@ PyObject* PyNetKernel::SendHttpRequestMultipart(const CHAR* lpszApName, const CH
 	// Close all handles.
 	CloseInternetHandle(m_hRequest, m_hConnect,  m_hInternet);
 
-	PYAUTO_LOCK
+	//PYAUTO_LOCK
 
 	if(m_bForceClose)
-		return Py_BuildValue("iis", ERROR_FORCECCLOSE, (int)dwStatusCode, "");
+	{
+		httpResp.dwError = ERROR_FORCECCLOSE;
+		httpResp.dwStatusCode = (int) dwStatusCode;
+		return ERROR_FORCECCLOSE;
+		//return Py_BuildValue("iis", ERROR_FORCECCLOSE, (int)dwStatusCode, "");
+	}
 
 	if(bSuccess)
-		return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
+	{
+		httpResp.dwError = 0;
+		httpResp.dwStatusCode = dwStatusCode;
+		httpResp.strResponse = strServerResponse;
+		return 0;
+		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
+	}
 	else if(dwError == (DWORD) ERROR_PROCESS)
-		return Py_BuildValue("iis", ERROR_PROCESS, 0, "");
+	{
+		httpResp.dwError = ERROR_PROCESS;
+		httpResp.dwStatusCode = 0;
+		httpResp.strResponse.clear();
+		return ERROR_PROCESS;
+		//return Py_BuildValue("iis", ERROR_PROCESS, 0, "");
+	}
 	else
-		return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
+	{
+		httpResp.dwError = dwError;
+		httpResp.dwStatusCode = dwStatusCode;
+		httpResp.strResponse.clear();
+		return dwError;
+		//return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
+	}
+	//if(bSuccess)
+	//	return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
+	//else if(dwError == (DWORD) ERROR_PROCESS)
+	//	return Py_BuildValue("iis", ERROR_PROCESS, 0, "");
+	//else
+	//	return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
 }
 
 
@@ -1094,7 +1127,7 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 	//return pRet;
 }
 
-PyObject* PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
+BOOL PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
 {
 	BOOL bRet = FALSE;
 	HANDLE hEntry;
@@ -1109,7 +1142,8 @@ PyObject* PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
 	if (!hEntry && lpCacheEntry)
 	{
 		delete [] lpCacheEntry; 
-		return Py_BuildValue("i", bRet);
+		//return Py_BuildValue("i", bRet);
+		return bRet;
 	}
 
 	do
@@ -1139,7 +1173,8 @@ PyObject* PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
 	{
 		delete [] lpCacheEntry; 
 	}
-	return Py_BuildValue("i", bRet);
+	/*return Py_BuildValue("i", bRet);*/
+	return bRet;
 }
 
 void PyNetKernel::ForceStop()

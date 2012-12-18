@@ -23,15 +23,6 @@ class CacheCallbacker;
 class PyNetKernel;
 #endif
 
-// Structure for file send request.
-struct MultiPartInfo
-{
-	std::wstring filePath;	// Full file path.
-	std::string content;	// multi part content
-	std::string header;		// Each multipart header.
-	DWORD dwFileSize;		// The file size.
-};
-
 extern "C" __declspec(dllexport) INetKernel* GetNetKernelInstance();
 extern "C" __declspec(dllexport) void DelInstance();
 
@@ -50,16 +41,16 @@ public:
 
 	void SetCallback(PyObject* callback);
 
-	PyObject* SendHttpRequest(const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
+	DWORD SendHttpRequest(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
 		BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody = NULL, const WCHAR* lpwszResponse = NULL,
 		const WCHAR* lpwszDump = NULL);
 
-	PyObject* SendHttpContent(const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+	DWORD SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 		DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
 		const WCHAR* lpwszResponse, const WCHAR* lpwszDump = NULL);
 
-	PyObject* SendHttpRequestMultipart(const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
-		const WCHAR* lpwszProxy, const CHAR* lpszHeader, PyObject* pPyMultiPart, DWORD dwContentLength,
+	DWORD SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+		const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL);
 
 	DWORD OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
@@ -74,7 +65,7 @@ public:
 		File,
 		Cookie
 	};
-	PyObject* DeleteUrlCache(int type, const WCHAR* lpwszCookieName);
+	BOOL DeleteUrlCache(int type, const WCHAR* lpwszCookieName);
 
 	//PyObject* OpenUrlCache(const CHAR* lpszUri);
 
