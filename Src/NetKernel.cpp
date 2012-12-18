@@ -1410,6 +1410,13 @@ void PyNetKernel::SetHaveRegToOLREG()
 	}
 }
 
+INetKernel& PyNetKernel::GetInstance()
+{
+	static PyNetKernel pyNetKernel;
+	return pyNetKernel;
+}
+
+
 HRESULT CacheCallbacker::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR szStatusText)
 {
 	if (!m_pNetKernel)
@@ -1431,20 +1438,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-static INetKernel* stpNetKernel = NULL;
-
 INetKernel* GetNetKernelInstance()
 {
-	if (stpNetKernel == NULL) stpNetKernel = new PyNetKernel();
-	return stpNetKernel;
-}
-void DelInstance()
-{
-	if (stpNetKernel)
-	{
-		delete stpNetKernel;
-		stpNetKernel = NULL;
-	}
+	return &PyNetKernel::GetInstance();
 }
 
 #ifdef _MANAGED

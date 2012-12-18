@@ -33,11 +33,14 @@ PyObject* genPyBoundary();
 
 class PyNetKernel : public PyCallback, public INetKernel
 {
+protected:
+	PyNetKernel();
+	virtual ~PyNetKernel();
+
 public:
 	friend CacheCallbacker;
 
-	PyNetKernel();
-	virtual ~PyNetKernel();
+	static INetKernel& GetInstance();
 
 	void SetCallback(PyObject* callback);
 
