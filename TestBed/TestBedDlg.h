@@ -59,4 +59,8 @@ public:
 	afx_msg void OnBnClickedCheckDownloadcache();
 	BOOL m_bIsCache;
 	CString m_szCacheName;
+	afx_msg void OnBnClickedCheckMultipart();
+	CButton m_ctrlEnableMulPart;
+	CString m_szMultiPartFileList;
+	CEdit m_ctrlMultiPartFileList;
 };

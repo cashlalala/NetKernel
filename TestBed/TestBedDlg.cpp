@@ -5,6 +5,7 @@
 #include "TestBed.h"
 #include "TestBedDlg.h"
 #include <WinInet.h>
+#include "MultiPartDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -59,6 +60,7 @@ CTestBedDlg::CTestBedDlg(CWnd* pParent /*=NULL*/)
 	, m_nPort((int)INTERNET_DEFAULT_HTTP_PORT)
 	, m_bIsCache(FALSE)
 	, m_szCacheName(_T(""))
+	, m_szMultiPartFileList(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pNetKernel = ((CTestBedApp*)AfxGetApp())->m_pNetKernel;
@@ -79,6 +81,9 @@ void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_COMBO_METHOD, m_szMethod);
 	DDX_Check(pDX, IDC_CHECK_DOWNLOADCACHE, m_bIsCache);
 	DDX_Text(pDX, IDC_EDIT_CACHENAME, m_szCacheName);
+	DDX_Control(pDX, IDC_CHECK_MultiPart, m_ctrlEnableMulPart);
+	DDX_Text(pDX, IDC_EDIT_SENDRQSTMULTIPART, m_szMultiPartFileList);
+	DDX_Control(pDX, IDC_EDIT_SENDRQSTMULTIPART, m_ctrlMultiPartFileList);
 }
 
 BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
@@ -93,6 +98,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	ON_EN_CHANGE(IDC_EDIT_OPENURL_BODY, &CTestBedDlg::OnEnChangeEditOpenurlBody)
 	ON_CBN_SELCHANGE(IDC_COMBO_METHOD, &CTestBedDlg::OnCbnSelchangeComboMethod)
 	ON_BN_CLICKED(IDC_CHECK_DOWNLOADCACHE, &CTestBedDlg::OnBnClickedCheckDownloadcache)
+	ON_BN_CLICKED(IDC_CHECK_MultiPart, &CTestBedDlg::OnBnClickedCheckMultipart)
 END_MESSAGE_MAP()
 
 
@@ -325,5 +331,21 @@ void CTestBedDlg::OnBnClickedCheckDownloadcache()
 		m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
 		CA2W pszWide(cUriVO.strHost.c_str(), CP_UTF8);
 		m_pNetKernel->DeleteUrlCache(Cookie,pszWide);
+	}
+}
+
+
+void CTestBedDlg::OnBnClickedCheckMultipart()
+{
+	// TODO: Add your control notification handler code here
+	if (m_ctrlEnableMulPart.GetCheck())
+	{
+		MultiPartDlg dlgMultiPartDlg;
+		dlgMultiPartDlg.DoModal();
+		m_ctrlMultiPartFileList.EnableWindow(TRUE);
+	}
+	else
+	{
+		m_ctrlMultiPartFileList.EnableWindow(FALSE);
 	}
 }
