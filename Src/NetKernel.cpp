@@ -713,7 +713,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, c
 		std::string header(lpszHeader);
 
 		if(g_bIsDumpRequest && (!g_wstrDumpFilePath.empty() || wcslen(lpwszDump) > 0))
-			dump("NetKernel Request:", header.c_str(), infoList, strUrl.c_str(), lpwszDump);
+			dump("NetKernel Request:", header.c_str(), vecMultiPart, strUrl.c_str(), lpwszDump);
 
 		//Prepare the Buffers to be passed to HttpSendRequestEx
 		INTERNET_BUFFERSA BuffersIn;
@@ -730,7 +730,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, c
 			continue;
 		dprintf(L"[NetKernel] HttpSendRequestExA success");
 
-		if(!WriteMultipartBody(m_hRequest, infoList, dwContentLength))
+		if(!WriteMultipartBody(m_hRequest, vecMultiPart, dwContentLength))
 			continue;
 		dprintf(L"[NetKernel] WriteMultipartBody success");
 

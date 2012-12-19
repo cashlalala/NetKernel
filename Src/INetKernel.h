@@ -77,9 +77,17 @@ struct INetKernel
 	//	DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
 	//	const WCHAR* lpwszResponse, const WCHAR* lpwszDump = NULL) = 0;
 
-	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
-		const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
-		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL) = 0;
+	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, 
+																	const CHAR* lpszApName, 
+																	const CHAR* lpszUri, 
+																	const CHAR* lpszMethod,
+																	const WCHAR* lpwszProxy, 
+																	const CHAR* lpszHeader, 
+																	std::vector<MultiPartInfo> vecMultiPart, 
+																	DWORD dwContentLength,
+																	const WCHAR* lpwszResponse = NULL, 
+																	const WCHAR* lpwszDump = NULL) 
+																	= 0;
 
 	virtual DWORD SendHttpRequest(HttpResponseValueObject& httpResp, 
 														const CHAR* lpszApName, 
