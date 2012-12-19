@@ -260,19 +260,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponseValueObject& httpResp, const CHAR
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
 	httpResp.strResponse = strServerResponse;
-	//httpResp.strResponse = new char[strServerResponse.length()+1];
-	//memset(httpResp.strResponse,0x0,sizeof(httpResp.strResponse));
-	//memcpy(httpResp.strResponse,strServerResponse.c_str(),strServerResponse.length());
-	//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
 	return dwError;
-	
-	//if(m_bForceClose)
-	//	return Py_BuildValue("iis", (int)ERROR_FORCECCLOSE, (int)dwStatusCode, "");
-
-	//if(bSuccess)
-	//	return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
-	//else
-	//	return Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
 }
 
 
@@ -1114,7 +1102,6 @@ DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUr
 		} while(0);
 	}
 	//PYAUTO_LOCK
-	OutputDebugStringA(pResBuffer);
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
 	httpResp.strResponse = std::string(pResBuffer);
@@ -1124,19 +1111,6 @@ DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUr
 		pResBuffer = NULL;
 	}
 	return dwError;
-	//PyObject* pRet = NULL;
-	//if(m_bForceClose)
-	//{
-	//	pRet = Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
-	//}
-	//else if(bSuccess)
-	//{
-	//	pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, pResBuffer, dwAvailableData);
-	//}
-	//else
-	//	pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, "", 0);
-
-	//return pRet;
 }
 
 BOOL PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
