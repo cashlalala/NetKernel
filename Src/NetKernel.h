@@ -63,11 +63,6 @@ public:
 
 	BOOL ResolveUrl(const CHAR* lpszUrl, UriValueObject& cUriVO);
 
-	enum DEL_CACHE_TYPE
-	{
-		File,
-		Cookie
-	};
 	BOOL DeleteUrlCache(int type, const WCHAR* lpwszCookieName);
 
 	//PyObject* OpenUrlCache(const CHAR* lpszUri);
@@ -77,6 +72,8 @@ public:
 	void SetDownloadCache(BOOL bCacheDownload);
 	PyObject* GetDZRegParams();
 	void SetHaveRegToOLREG();
+
+	void GetCacheFileName(WCHAR* lpwszFileName);
 
 #ifndef __SWIG__
 private:
@@ -109,6 +106,11 @@ private:
 
 	BOOL ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszResponse, char*& pResBuffer, DWORD& dwError);
 
+	void SetRespViaStdStr(char* lpcChar, std::string szStr);
+
+	void SetRespViaCharPtr(char* lpcDest, char* lpcSrc);
+
+
 private:
 	HWND m_hWnd;
 	HINTERNET m_hInternet;
@@ -118,6 +120,7 @@ private:
 	BOOL m_bForceClose;
 	BOOL m_bCacheDownload;
 #endif
+	WCHAR m_lpcwszCookieFileName[MAX_PATH+1];
 };
 
 #ifndef __SWIG__

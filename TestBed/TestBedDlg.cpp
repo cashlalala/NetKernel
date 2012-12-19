@@ -57,6 +57,8 @@ CTestBedDlg::CTestBedDlg(CWnd* pParent /*=NULL*/)
 	, m_nContentLen(0)
 	, m_szOutput(_T(""))
 	, m_nPort((int)INTERNET_DEFAULT_HTTP_PORT)
+	, m_bIsCache(FALSE)
+	, m_szCacheName(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pNetKernel = ((CTestBedApp*)AfxGetApp())->m_pNetKernel;
@@ -75,6 +77,8 @@ void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_OPENURL_CONTENTLEN2, m_nPort);
 	DDX_Control(pDX, IDC_COMBO_METHOD, m_ctrlComboMethod);
 	DDX_Text(pDX, IDC_COMBO_METHOD, m_szMethod);
+	DDX_Check(pDX, IDC_CHECK_DOWNLOADCACHE, m_bIsCache);
+	DDX_Text(pDX, IDC_EDIT_CACHENAME, m_szCacheName);
 }
 
 BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
@@ -88,6 +92,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SendHttpRequest, &CTestBedDlg::OnBnClickedButtonSendhttprequest)
 	ON_EN_CHANGE(IDC_EDIT_OPENURL_BODY, &CTestBedDlg::OnEnChangeEditOpenurlBody)
 	ON_CBN_SELCHANGE(IDC_COMBO_METHOD, &CTestBedDlg::OnCbnSelchangeComboMethod)
+	ON_BN_CLICKED(IDC_CHECK_DOWNLOADCACHE, &CTestBedDlg::OnBnClickedCheckDownloadcache)
 END_MESSAGE_MAP()
 
 
@@ -236,8 +241,9 @@ void CTestBedDlg::OnBnClickedButtonOpenurl()
 	CString szResp(httpResp.strResponse,strlen(httpResp.strResponse));
 	OutputDebugStringA(httpResp.strResponse);
 	OutputDebugString(szResp);
-	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
-
+	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s STOP"),httpResp.dwError, httpResp.dwStatusCode,szResp);
+	m_pNetKernel->GetCacheFileName(m_szCacheName.GetBuffer(MAX_PATH+1));
+	m_szCacheName.ReleaseBuffer();
 	UpdateData(FALSE);
 }
 
@@ -304,4 +310,23 @@ void CTestBedDlg::OnCbnSelchangeComboMethod()
 	}
 	
 	UpdateData(FALSE);
+}
+
+
+void CTestBedDlg::OnBnClickedCheckDownloadcache()
+{
+	UpdateData(TRUE);
+	// TODO: Add your control notification handler code here
+	if (m_bIsCache)
+	{
+		m_pNetKernel->SetDownloadCache(TRUE);
+	}
+	else
+	{
+		UriValueObject cUriVO;
+		m_pNetKernel->SetDownloadCache(FALSE);
+		m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
+		CA2W pszWide(cUriVO.strHost.c_str(), CP_UTF8);
+		m_pNetKernel->DeleteUrlCache(Cookie,pszWide);
+	}
 }

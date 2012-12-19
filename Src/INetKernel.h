@@ -16,7 +16,7 @@
 #include <vector>
 
 
-class HttpResponse
+struct HttpResponse
 {
 public:
 	inline HttpResponse()
@@ -30,27 +30,10 @@ public:
 		if (strResponse) delete[] strResponse;
 		strResponse = NULL;
 	}
-
-	inline void SetRespViaStdStr(std::string szStr)
-	{
-		if (szStr.length()==0) return;
-		if (strResponse) delete[] strResponse;
-		strResponse = new char[szStr.size()+1];
-		memset(strResponse,0x0,szStr.size()+1);
-		strcpy_s(strResponse,szStr.size()+1,szStr.c_str());
-	}
-
-	inline void SetRespViaCharPtr(char* lpcChar)
-	{
-		if (strResponse) delete[] strResponse;
-		strResponse = lpcChar;
-	}
-
 	DWORD dwStatusCode;
 	char* strResponse;
 	DWORD dwError;
 };
-
 
 struct UriValueObject
 {
@@ -77,6 +60,12 @@ struct MultiPartInfo
 	std::string content;	// multi part content
 	std::string header;		// Each multipart header.
 	DWORD dwFileSize;		// The file size.
+};
+
+enum DEL_CACHE_TYPE
+{
+	File,
+	Cookie
 };
 
 struct INetKernel
@@ -111,6 +100,8 @@ struct INetKernel
 
 	virtual BOOL ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO) = 0;
 
+
+	virtual void GetCacheFileName(WCHAR* lpwszFileName) = 0;
 
 	typedef  INetKernel* (*PFNGETINSTANCE)();
 	typedef  void (*PFNDELINSTANCE)();

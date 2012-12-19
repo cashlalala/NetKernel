@@ -180,6 +180,7 @@ m_bForceClose(FALSE),
 m_bCacheDownload(FALSE),
 m_hWnd(NULL)
 {
+	memset(m_lpcwszCookieFileName,0x0,MAX_PATH+1);
 }
 
 
@@ -258,7 +259,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApNam
 	//PYAUTO_LOCK
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.SetRespViaStdStr(strServerResponse);
+	SetRespViaStdStr(httpResp.strResponse,strServerResponse);
 	return dwError;
 	
 	//if(m_bForceClose)
@@ -437,6 +438,7 @@ BOOL PyNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentL
 	{
 		pResBuffer = new char[dwBufSize];
 	}
+	memset(pResBuffer,0x0,dwBufSize);
 
 	do{
 		if(OnStateCallBack("receive", (int)dwTotalRead, (int)dwContentLength) != CALLBACK_OK)
@@ -771,7 +773,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* 
 	{
 		httpResp.dwError = 0;
 		httpResp.dwStatusCode = dwStatusCode;
-		httpResp.SetRespViaStdStr(strServerResponse);
+		SetRespViaStdStr(httpResp.strResponse,strServerResponse);
 		return 0;
 		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
 	}
@@ -1065,6 +1067,7 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 				MultiByteToWideChar(CP_ACP, MB_COMPOSITE, lpszUri, strlen(lpszUri), pwszUri, MAX_URI_SIZE);
 			HRESULT hr = URLDownloadToCacheFile(NULL, pwszUri, pwszFilename, _MAX_PATH, 0, callbacker);
 			if(FAILED(hr)) break;
+			wcscpy_s(m_lpcwszCookieFileName,wcslen(pwszFilename)+1,pwszFilename);
 			if(lpwszResponse && wcslen(lpwszResponse) > 0)
 				bSuccess = CopyFile(pwszFilename, lpwszResponse, FALSE);
 			else
@@ -1073,7 +1076,7 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 				if(hFile == INVALID_HANDLE_VALUE) break;
 				dwAvailableData = GetFileSize(hFile, NULL);
 				pResBuffer = new char[dwAvailableData+1];
-				memset(pResBuffer,0x0,dwAvailableData+1);
+				//memset(pResBuffer,0x0,dwAvailableData+1);
 				DWORD dwFileRead = 0, dwTotalRead = 0;
 				while(dwTotalRead < dwAvailableData)
 				{
@@ -1103,8 +1106,14 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.SetRespViaCharPtr(pResBuffer);
-	pResBuffer = NULL;
+	httpResp.strResponse = pResBuffer;
+
+	//SetRespViaCharPtr(httpResp.strResponse,pResBuffer);
+	if (pResBuffer)
+	{
+		//delete[] pResBuffer;
+		pResBuffer = NULL;
+	}
 	//httpResp.strResponse = new std::string(pResBuffer,dwAvailableData);
 	return dwError;
 	//PyObject* pRet = NULL;
@@ -1409,6 +1418,29 @@ void PyNetKernel::SetHaveRegToOLREG()
 BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO)
 {
 	return ResolveUri(lpszUri, cUriVO.strUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
+}
+
+void PyNetKernel::GetCacheFileName( WCHAR* lpwszFileName )
+{
+	if (wcslen(m_lpcwszCookieFileName)==0) return;
+	wcscpy_s(lpwszFileName,wcslen(m_lpcwszCookieFileName)+1,m_lpcwszCookieFileName);
+}
+
+void PyNetKernel::SetRespViaCharPtr( char* lpcDest, char* lpcSrc )
+{
+	if (lpcSrc=NULL) return;
+	if (lpcDest) delete[] lpcDest;
+	lpcDest = new char[strlen(lpcSrc)+1];
+	strcpy_s(lpcDest,strlen(lpcSrc)+1,lpcSrc);
+}
+
+void PyNetKernel::SetRespViaStdStr( char* lpcChar, std::string szStr )
+{
+	if (szStr.length()==0) return;
+	if (lpcChar) delete[] lpcChar;
+	lpcChar = new char[szStr.size()+1];
+	memset(lpcChar,0x0,szStr.size()+1);
+	strcpy_s(lpcChar,szStr.size()+1,szStr.c_str());
 }
 
 HRESULT CacheCallbacker::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR szStatusText)

@@ -56,4 +56,7 @@ public:
 	afx_msg void OnEnChangeEditOpenurlBody();
 	CComboBox m_ctrlComboMethod;
 	afx_msg void OnCbnSelchangeComboMethod();
+	afx_msg void OnBnClickedCheckDownloadcache();
+	BOOL m_bIsCache;
+	CString m_szCacheName;
 };
