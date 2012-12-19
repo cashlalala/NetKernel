@@ -16,37 +16,36 @@
 #include <vector>
 
 
-struct HttpResponse
+struct HttpResponseValueObject
 {
-public:
-	inline HttpResponse()
+	HttpResponseValueObject()
 	{
 		dwError = 0;
 		dwStatusCode = 0;
-		//strResponse = NULL;
 	}
-	inline ~HttpResponse()
-	{
-		/*if (strResponse) delete[] strResponse;
-		strResponse = NULL;*/
-	}
-	DWORD dwStatusCode;
-	//char* strResponse;
-	std::string strResponse;
-	DWORD dwError;
+	DWORD dwError; //The error code returned by Win32 API
+	DWORD dwStatusCode; //The status code of HTTP
+	std::string strResponse; //The response of HTTP
 };
 
 struct UriValueObject
 {
+	/*
+	* sample url: https://maps.google.com/maps?hl=zh-TW&tab=wl
+	* strRqstUrl: /maps?hl=zh-TW&tab=wl
+	* bSecure: True
+	* strHost: maps.google.com
+	* dwPort : 0 ---(default)-->443 (the default port of https is 443, and the one of http is 80)
+	*/
 	UriValueObject()
 	{
 		bSecure = FALSE;
 		dwPort = 0;
 	}
-	std::string strUrl; 
-	BOOL bSecure;
-	std::string strHost; 
-	DWORD dwPort;
+	std::string strRqstUrl; //the path without protocol and host
+	BOOL bSecure; //if the protocol is https, this value will be set
+	std::string strHost; //the host
+	DWORD dwPort; //port
 };
 
 
@@ -78,11 +77,11 @@ struct INetKernel
 	//	DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
 	//	const WCHAR* lpwszResponse, const WCHAR* lpwszDump = NULL) = 0;
 
-	virtual DWORD SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
 		const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL) = 0;
 
-	virtual DWORD SendHttpRequest(HttpResponse& httpResp, 
+	virtual DWORD SendHttpRequest(HttpResponseValueObject& httpResp, 
 														const CHAR* lpszApName, 
 														const CHAR* lpszMethod, 
 														const CHAR* lpszServer, 
@@ -92,16 +91,18 @@ struct INetKernel
 														const CHAR* lpszHeader, 
 														const CHAR* lpszBody = NULL, 
 														const WCHAR* lpwszResponse = NULL,
-														const WCHAR* lpwszDump = NULL) = 0;
+														const WCHAR* lpwszDump = NULL) 
+														= 0;
 
-	virtual DWORD OpenUrl(HttpResponse& httpResp, 
+	virtual DWORD OpenUrl(HttpResponseValueObject& httpResp, 
 											const CHAR* lpszUri, 
 											const CHAR* lpszMethod = NULL, 
 											const WCHAR* lpwszProxy = NULL, 
 											const CHAR* lpszHeader = NULL, 
 											const WCHAR* lpwszResponse = NULL, 
 											const CHAR* pBodyBuffer = NULL, 
-											DWORD dwContentLength = 0) = 0;
+											DWORD dwContentLength = 0) //The size of body in Bytes. If the Body is mixed with unicode and ascii, please assign the right size of the string. 
+											= 0;
 
 	//PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 	//	const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
@@ -116,7 +117,7 @@ struct INetKernel
 
 	virtual BOOL ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO) = 0;
 
-
+	//For debug use
 	virtual void GetCacheFileName(WCHAR* lpwszFileName) = 0;
 
 	typedef  INetKernel* (*PFNGETINSTANCE)();
