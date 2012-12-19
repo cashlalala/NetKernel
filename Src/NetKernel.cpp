@@ -259,9 +259,10 @@ DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApNam
 	//PYAUTO_LOCK
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse = new char[strServerResponse.length()+1];
-	memset(httpResp.strResponse,0x0,sizeof(httpResp.strResponse));
-	memcpy(httpResp.strResponse,strServerResponse.c_str(),strServerResponse.length());
+	httpResp.strResponse = strServerResponse;
+	//httpResp.strResponse = new char[strServerResponse.length()+1];
+	//memset(httpResp.strResponse,0x0,sizeof(httpResp.strResponse));
+	//memcpy(httpResp.strResponse,strServerResponse.c_str(),strServerResponse.length());
 	//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
 	return dwError;
 	
@@ -452,6 +453,7 @@ BOOL PyNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentL
 		{
 			dwBufSize *= 2;
 			char* pNewBuffer = new char[dwBufSize];
+			memset(pNewBuffer,0x0,dwBufSize);
 			memcpy_s(pNewBuffer, dwBufSize, pResBuffer, dwBufSize / 2);
 			delete [] pResBuffer;
 			pResBuffer = pNewBuffer;
@@ -776,7 +778,8 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* 
 	{
 		httpResp.dwError = 0;
 		httpResp.dwStatusCode = dwStatusCode;
-		SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+		//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+		httpResp.strResponse = strServerResponse;
 		return 0;
 		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
 	}
@@ -1054,6 +1057,8 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 
+	if (pBodyBuffer && dwBodyLength == 0)
+		dwBodyLength = strlen(pBodyBuffer);
 	//PYAUTO_UNLOCK
 	if(m_bCacheDownload)
 	{
@@ -1106,15 +1111,15 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 		} while(0);
 	}
 	//PYAUTO_LOCK
-
+	OutputDebugStringA(pResBuffer);
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse = pResBuffer;
+	httpResp.strResponse = std::string(pResBuffer);
 
 	//SetRespViaCharPtr(httpResp.strResponse,pResBuffer);
 	if (pResBuffer)
 	{
-		//delete[] pResBuffer;
+		delete[] pResBuffer;
 		pResBuffer = NULL;
 	}
 	//httpResp.strResponse = new std::string(pResBuffer,dwAvailableData);

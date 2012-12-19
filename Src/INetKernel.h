@@ -23,15 +23,16 @@ public:
 	{
 		dwError = 0;
 		dwStatusCode = 0;
-		strResponse = NULL;
+		//strResponse = NULL;
 	}
 	inline ~HttpResponse()
 	{
-		if (strResponse) delete[] strResponse;
-		strResponse = NULL;
+		/*if (strResponse) delete[] strResponse;
+		strResponse = NULL;*/
 	}
 	DWORD dwStatusCode;
-	char* strResponse;
+	//char* strResponse;
+	std::string strResponse;
 	DWORD dwError;
 };
 
@@ -72,10 +73,6 @@ struct INetKernel
 {
 	//void SetCallback(PyObject* callback);
 
-	virtual DWORD SendHttpRequest(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
-		BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody = NULL, const WCHAR* lpwszResponse = NULL,
-		const WCHAR* lpwszDump = NULL) = 0;
-
 	//not used 
 	//virtual DWORD SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 	//	DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
@@ -85,7 +82,26 @@ struct INetKernel
 		const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL) = 0;
 
-	virtual DWORD OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0) = 0;
+	virtual DWORD SendHttpRequest(HttpResponse& httpResp, 
+														const CHAR* lpszApName, 
+														const CHAR* lpszMethod, 
+														const CHAR* lpszServer, 
+														DWORD dwPort,
+														BOOL bSecure, 
+														const CHAR* lpszUrl, 
+														const CHAR* lpszHeader, 
+														const CHAR* lpszBody = NULL, 
+														const WCHAR* lpwszResponse = NULL,
+														const WCHAR* lpwszDump = NULL) = 0;
+
+	virtual DWORD OpenUrl(HttpResponse& httpResp, 
+											const CHAR* lpszUri, 
+											const CHAR* lpszMethod = NULL, 
+											const WCHAR* lpwszProxy = NULL, 
+											const CHAR* lpszHeader = NULL, 
+											const WCHAR* lpwszResponse = NULL, 
+											const CHAR* pBodyBuffer = NULL, 
+											DWORD dwContentLength = 0) = 0;
 
 	//PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 	//	const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
