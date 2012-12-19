@@ -259,7 +259,10 @@ DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApNam
 	//PYAUTO_LOCK
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+	httpResp.strResponse = new char[strServerResponse.length()+1];
+	memset(httpResp.strResponse,0x0,sizeof(httpResp.strResponse));
+	memcpy(httpResp.strResponse,strServerResponse.c_str(),strServerResponse.length());
+	//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
 	return dwError;
 	
 	//if(m_bForceClose)
