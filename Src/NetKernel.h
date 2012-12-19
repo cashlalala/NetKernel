@@ -42,19 +42,19 @@ public:
 
 	void SetCallback(PyObject* callback);
 
-	DWORD SendHttpRequest(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
+	DWORD SendHttpRequest(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
 		BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody = NULL, const WCHAR* lpwszResponse = NULL,
 		const WCHAR* lpwszDump = NULL);
 
-	DWORD SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+	DWORD SendHttpContent(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 		DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
 		const WCHAR* lpwszResponse, const WCHAR* lpwszDump = NULL);
 
-	DWORD SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+	DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
 		const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL);
 
-	DWORD OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
+	DWORD OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
 
 	PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 		const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
@@ -105,10 +105,6 @@ private:
 		const CHAR* pBodyBuffer, DWORD dwContentLengthm, DWORD& dwStatusCode, DWORD& dwAvailableData, DWORD& dwError);
 
 	BOOL ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszResponse, char*& pResBuffer, DWORD& dwError);
-
-	void SetRespViaStdStr(char* lpcChar, std::string szStr);
-
-	void SetRespViaCharPtr(char* lpcDest, char* lpcSrc);
 
 
 private:

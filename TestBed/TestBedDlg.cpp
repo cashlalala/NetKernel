@@ -234,12 +234,12 @@ void CTestBedDlg::OnBnClickedButtonOpenurl()
 {
 	UpdateData(TRUE);
 	// TODO: 在此加入控制項告知處理常式程式碼
-	HttpResponse httpResp;
-
-	m_pNetKernel->OpenUrl(httpResp, CT2CA(m_szUrl),CT2CA(m_szMethod),0,CT2CA(m_szHeader),0,CT2CA(m_szBody),m_szBody.GetLength());
-
-	CString szResp(httpResp.strResponse,strlen(httpResp.strResponse));
-	OutputDebugStringA(httpResp.strResponse);
+	HttpResponseValueObject httpResp;
+	CString resp;
+	m_pNetKernel->OpenUrl(httpResp, CT2CA(m_szUrl),CT2CA(m_szMethod),0,CT2CA(m_szHeader),resp,CT2CA(m_szBody));
+	CA2W pBuffer(httpResp.strResponse.c_str());
+	CString szResp(pBuffer);
+	OutputDebugStringA(httpResp.strResponse.c_str());
 	OutputDebugString(szResp);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s STOP"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 	m_pNetKernel->GetCacheFileName(m_szCacheName.GetBuffer(MAX_PATH+1));
@@ -252,7 +252,7 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 {
 	UpdateData(TRUE);
 	// TODO: Add your control notification handler code here
-	HttpResponse httpResp;
+	HttpResponseValueObject httpResp;
 
 	UriValueObject cUriVO;
 	m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
@@ -262,10 +262,10 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 														CT2CA(m_szMethod),
 														cUriVO.strHost.c_str(),
 														m_nPort,FALSE, 
-														cUriVO.strUrl.c_str(),
+														cUriVO.strRqstUrl.c_str(),
 														CT2CA(m_szHeader),CT2CA(m_szBody));
-
-	CString szResp(httpResp.strResponse);
+	CA2W pBuff(httpResp.strResponse.c_str());
+	CString szResp(pBuff);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 
 	UpdateData(FALSE);

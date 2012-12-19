@@ -198,7 +198,7 @@ void PyNetKernel::SetCallback(PyObject* callback)
 
 
 // Send text body request.
-DWORD PyNetKernel::SendHttpRequest(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
+DWORD PyNetKernel::SendHttpRequest(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
 	BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
 	return SendHttpContent(httpResp, lpszApName, lpszMethod, lpszServer, wPort, bSecure, lpszUrl, lpszHeader,
@@ -207,7 +207,7 @@ DWORD PyNetKernel::SendHttpRequest(HttpResponse& httpResp, const CHAR* lpszApNam
 
 
 // The function to do all send data jobs.
-DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+DWORD PyNetKernel::SendHttpContent(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 	DWORD dwPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader,
 	const CHAR* lpBody, DWORD dwLength, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -259,7 +259,11 @@ DWORD PyNetKernel::SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApNam
 	//PYAUTO_LOCK
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+	httpResp.strResponse = strServerResponse;
+	//httpResp.strResponse = new char[strServerResponse.length()+1];
+	//memset(httpResp.strResponse,0x0,sizeof(httpResp.strResponse));
+	//memcpy(httpResp.strResponse,strServerResponse.c_str(),strServerResponse.length());
+	//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
 	return dwError;
 	
 	//if(m_bForceClose)
@@ -449,6 +453,7 @@ BOOL PyNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentL
 		{
 			dwBufSize *= 2;
 			char* pNewBuffer = new char[dwBufSize];
+			memset(pNewBuffer,0x0,dwBufSize);
 			memcpy_s(pNewBuffer, dwBufSize, pResBuffer, dwBufSize / 2);
 			delete [] pResBuffer;
 			pResBuffer = pNewBuffer;
@@ -461,6 +466,9 @@ BOOL PyNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentL
 	} while(dwRead != 0);
 
 	dwContentLength = dwTotalRead;
+	
+	pResBuffer[dwContentLength] = '\0';
+	dwContentLength += 1;
 
 	return TRUE;
 }
@@ -632,7 +640,7 @@ BOOL PyNetKernel::WriteMultipartBody(HINTERNET& hRequest, std::vector<MultiPartI
 //
 // The parameters above must give, even the data is empty, caller should give like: 'filename':u''
 //
-DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
 	const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 	const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -773,7 +781,8 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponse& httpResp, const CHAR* 
 	{
 		httpResp.dwError = 0;
 		httpResp.dwStatusCode = dwStatusCode;
-		SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+		//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+		httpResp.strResponse = strServerResponse;
 		return 0;
 		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
 	}
@@ -1039,7 +1048,7 @@ PyObject* PyNetKernel::ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszR
 	return pRet;
 }
 
-DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
+DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
 {
 	DWORD dwStatusCode = 0;
 	DWORD dwAvailableData = 0;
@@ -1051,6 +1060,8 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 
+	if (pBodyBuffer && dwBodyLength == 0)
+		dwBodyLength = strlen(pBodyBuffer);
 	//PYAUTO_UNLOCK
 	if(m_bCacheDownload)
 	{
@@ -1103,18 +1114,15 @@ DWORD PyNetKernel::OpenUrl(HttpResponse& httpResp, const CHAR* lpszUri, const CH
 		} while(0);
 	}
 	//PYAUTO_LOCK
-
+	OutputDebugStringA(pResBuffer);
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse = pResBuffer;
-
-	//SetRespViaCharPtr(httpResp.strResponse,pResBuffer);
+	httpResp.strResponse = std::string(pResBuffer);
 	if (pResBuffer)
 	{
-		//delete[] pResBuffer;
+		delete[] pResBuffer;
 		pResBuffer = NULL;
 	}
-	//httpResp.strResponse = new std::string(pResBuffer,dwAvailableData);
 	return dwError;
 	//PyObject* pRet = NULL;
 	//if(m_bForceClose)
@@ -1417,7 +1425,7 @@ void PyNetKernel::SetHaveRegToOLREG()
 
 BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO)
 {
-	return ResolveUri(lpszUri, cUriVO.strUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
+	return ResolveUri(lpszUri, cUriVO.strRqstUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
 }
 
 void PyNetKernel::GetCacheFileName( WCHAR* lpwszFileName )
@@ -1426,22 +1434,6 @@ void PyNetKernel::GetCacheFileName( WCHAR* lpwszFileName )
 	wcscpy_s(lpwszFileName,wcslen(m_lpcwszCookieFileName)+1,m_lpcwszCookieFileName);
 }
 
-void PyNetKernel::SetRespViaCharPtr( char* lpcDest, char* lpcSrc )
-{
-	if (lpcSrc=NULL) return;
-	if (lpcDest) delete[] lpcDest;
-	lpcDest = new char[strlen(lpcSrc)+1];
-	strcpy_s(lpcDest,strlen(lpcSrc)+1,lpcSrc);
-}
-
-void PyNetKernel::SetRespViaStdStr( char* lpcChar, std::string szStr )
-{
-	if (szStr.length()==0) return;
-	if (lpcChar) delete[] lpcChar;
-	lpcChar = new char[szStr.size()+1];
-	memset(lpcChar,0x0,szStr.size()+1);
-	strcpy_s(lpcChar,szStr.size()+1,szStr.c_str());
-}
 
 HRESULT CacheCallbacker::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR szStatusText)
 {
