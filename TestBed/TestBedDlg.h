@@ -63,4 +63,7 @@ public:
 	CButton m_ctrlEnableMulPart;
 	CString m_szMultiPartFileList;
 	CEdit m_ctrlMultiPartFileList;
+	std::vector<MultiPartInfo> m_vecMultiPartInfo;
+	int m_nItemCnt;
+	afx_msg void OnBnClickedButtonSendhttprequestmultipart();
 };

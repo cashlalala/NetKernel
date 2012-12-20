@@ -1,14 +1,16 @@
 #pragma once
+#include "afxwin.h"
 
 
 // MultiPartDlg dialog
 
-class MultiPartDlg : public CDialogEx
+class MultiPartDlg : public CDialog
 {
 	DECLARE_DYNAMIC(MultiPartDlg)
 
 public:
 	MultiPartDlg(CWnd* pParent = NULL);   // standard constructor
+	MultiPartDlg(std::vector<MultiPartInfo> vecItemList);
 	virtual ~MultiPartDlg();
 
 // Dialog Data
@@ -16,6 +18,20 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CString m_szContent;
+	CString m_szHeader;
+	CString m_szFile;
+	int m_nSize;
+	afx_msg void OnBnClickedButtonOpenfile();
+	afx_msg void OnBnClickedButtonAdd();
+	CListBox m_ctrlItemList;
+	afx_msg void OnBnClickedButtonDelete();
+	std::vector<MultiPartInfo> m_vecMultiPartInfo;
+	CString m_szItemStrings;
+	afx_msg void OnLbnSelchangeListItemlist();
+	afx_msg void OnBnClickedButtonSave();
 };

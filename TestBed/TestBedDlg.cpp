@@ -61,6 +61,7 @@ CTestBedDlg::CTestBedDlg(CWnd* pParent /*=NULL*/)
 	, m_bIsCache(FALSE)
 	, m_szCacheName(_T(""))
 	, m_szMultiPartFileList(_T(""))
+	, m_nItemCnt(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pNetKernel = ((CTestBedApp*)AfxGetApp())->m_pNetKernel;
@@ -99,6 +100,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO_METHOD, &CTestBedDlg::OnCbnSelchangeComboMethod)
 	ON_BN_CLICKED(IDC_CHECK_DOWNLOADCACHE, &CTestBedDlg::OnBnClickedCheckDownloadcache)
 	ON_BN_CLICKED(IDC_CHECK_MultiPart, &CTestBedDlg::OnBnClickedCheckMultipart)
+	ON_BN_CLICKED(IDC_BUTTON_SendHttpRequestMultipart, &CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart)
 END_MESSAGE_MAP()
 
 
@@ -337,15 +339,37 @@ void CTestBedDlg::OnBnClickedCheckDownloadcache()
 
 void CTestBedDlg::OnBnClickedCheckMultipart()
 {
+	UpdateData(TRUE);
 	// TODO: Add your control notification handler code here
 	if (m_ctrlEnableMulPart.GetCheck())
 	{
-		MultiPartDlg dlgMultiPartDlg;
-		dlgMultiPartDlg.DoModal();
+		MultiPartDlg dlgMultiPartDlg(m_vecMultiPartInfo);
+		if (dlgMultiPartDlg.DoModal()==IDOK)
+		{
+			m_vecMultiPartInfo = dlgMultiPartDlg.m_vecMultiPartInfo;
+			for (int i=0;i<m_vecMultiPartInfo.size();++i)
+			{
+				CString szTemp;
+				CString szContent = CA2W(m_vecMultiPartInfo[i].content.c_str());
+				CString szHeader = CA2W(m_vecMultiPartInfo[i].header.c_str());
+				CString szFilePath(m_vecMultiPartInfo[i].filePath.c_str());
+				szTemp.Format(_T("%d. Header:[%s] Content:[%s] FilePath:[%s] \r\n"),i+1, szFilePath,szContent,szHeader);
+				m_szMultiPartFileList += szTemp;
+			}
+		}
 		m_ctrlMultiPartFileList.EnableWindow(TRUE);
 	}
 	else
 	{
 		m_ctrlMultiPartFileList.EnableWindow(FALSE);
 	}
+	UpdateData(FALSE);
+}
+
+
+void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
+{
+	// TODO: Add your control notification handler code here
+
+	//m_pNetKernel->SendHttpRequestMultipart()
 }

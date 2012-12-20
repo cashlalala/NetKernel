@@ -36,14 +36,16 @@
 #define IDC_CHECK_DOWNLOADCACHE         1021
 #define IDC_EDIT_CACHENAME              1022
 #define IDC_CHECK_MultiPart             1023
-#define IDC_BUTTON1                     1025
+#define IDC_BUTTON_ADD                  1025
 #define IDC_LIST_ITEMLIST               1026
-#define IDC_BUTTON3                     1027
+#define IDC_BUTTON_OPENFILE             1027
 #define IDC_EDIT_FILEPATH               1028
-#define IDC_EDIT3                       1029
 #define IDC_EDIT_SIZE                   1029
 #define IDC_EDIT_HEADER                 1030
 #define IDC_EDIT_CONTENT                1031
+#define IDC_BUTTON_DELETE               1032
+#define IDC_BUTTON_DELETE2              1033
+#define IDC_BUTTON_SAVE                 1033
 
 // Next default values for new objects
 // 
@@ -51,7 +53,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1032
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
