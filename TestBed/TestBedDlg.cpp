@@ -288,7 +288,7 @@ void CTestBedDlg::OnEnChangeEditOpenurlBody()
 
 	// TODO:  Add your control notification handler code here
 	UpdateData(TRUE);
-	GetDlgItem(IDC_EDIT_OPENURL_BODY)->SetFocus();
+	//GetDlgItem(IDC_EDIT_OPENURL_BODY)->SetFocus();
 	m_nContentLen = m_szBody.GetLength();
 
 	UpdateData(FALSE);

@@ -37,4 +37,6 @@ public:
 	int m_nContentSize;
 	ULONGLONG m_nFileSize;
 	afx_msg void OnEnChangeEditContent();
+	void Clear(void);
+	bool m_bIsFromSsave;
 };

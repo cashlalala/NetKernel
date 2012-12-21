@@ -21,6 +21,7 @@ MultiPartDlg::MultiPartDlg(CWnd* pParent /*=NULL*/)
 	, m_szItemStrings(_T(""))
 	, m_nContentSize(0)
 	, m_nFileSize(0)
+	, m_bIsFromSsave(false)
 {
 
 }
@@ -76,25 +77,51 @@ void MultiPartDlg::OnBnClickedButtonOpenfile()
 	CFileDialog dlgFile(TRUE,_T("*"),_T("*.*"),OFN_HIDEREADONLY,szFilter,m_pParentWnd);
 	if (dlgFile.DoModal()==IDOK)
 	{
-		//m_szFile +=dlgFile.GetFolderPath();
-		m_szFile += dlgFile.GetPathName();
+		m_szFile = dlgFile.GetPathName();
+		if (PathFileExists(m_szFile))
+		{
+			CFile cFile;
+			if (cFile.Open(m_szFile,CFile::modeRead)) 
+			{
+				m_nFileSize = cFile.GetLength();
+				m_nSize = m_nContentSize + m_nFileSize;
+				cFile.Close();
+			}
+		}
+		else
+		{
+			m_nFileSize = 0;
+			m_szFile += _T("    ------->  File doesn't exist!");
+		}
 	}
 	UpdateData(FALSE);
 }
 
 void MultiPartDlg::OnBnClickedButtonAdd()
 {
-
-
 	UpdateData(TRUE);
 	CString szTempItem;
-	szTempItem.Format(_T("%d:"),m_ctrlItemList.GetCount()+1);
+	MultiPartInfo cMultiPartInfo;	
+	if (m_bIsFromSsave)
+	{
+		//szTempItem.Format(_T("%d. Header:[%s] Content:[%s] Filepath:[%s]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile);
+		szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] FilePath:[%s] File+ContentSize:[%d]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile,m_nSize);
+		
+		cMultiPartInfo.content = CW2A(m_szContent);
+		cMultiPartInfo.dwFileSize = m_nSize;
+		cMultiPartInfo.filePath = m_szFile;
+		cMultiPartInfo.header = CW2A(m_szHeader);		
+	}
+	else 
+	{	
+		szTempItem.Format(_T("%d,"),m_ctrlItemList.GetCount()+1);
+	}
+	m_vecMultiPartInfo.push_back(cMultiPartInfo);
 	m_ctrlItemList.AddString(szTempItem);
-	m_ctrlItemList.SetCurSel(m_ctrlItemList.GetCount()-1);
+	m_bIsFromSsave = false;
+	m_ctrlItemList.SetCurSel(LB_ERR);
+	this->Clear();
 
-	m_szContent = _T("");
-	m_szHeader = _T("");
-	m_szFile = _T("");
 	UpdateData(FALSE);
 }
 
@@ -126,13 +153,21 @@ BOOL MultiPartDlg::OnInitDialog()
 void MultiPartDlg::OnLbnSelchangeListItemlist()
 {
 	// TODO: Add your control notification handler code here
+	this->Clear();
+
 	CString szItem;
 	int nCurItem = m_ctrlItemList.GetCurSel();
 	if (nCurItem == LB_ERR) return;
 	m_szFile = CString(m_vecMultiPartInfo[nCurItem].filePath.c_str());
 	m_szContent = CA2W(m_vecMultiPartInfo[nCurItem].content.c_str());
 	m_szHeader = CA2W(m_vecMultiPartInfo[nCurItem].header.c_str());
-	
+	m_nSize = m_vecMultiPartInfo[nCurItem].dwFileSize;
+	m_nContentSize = strlen(m_vecMultiPartInfo[nCurItem].content.c_str());
+	if (!m_vecMultiPartInfo[nCurItem].filePath.empty())
+	{
+		CFile cFile(m_vecMultiPartInfo[nCurItem].filePath.c_str(),CFile::modeRead);
+		m_nFileSize = cFile.GetLength();
+	}
 	UpdateData(FALSE);
 }
 
@@ -140,45 +175,40 @@ void MultiPartDlg::OnLbnSelchangeListItemlist()
 void MultiPartDlg::OnBnClickedButtonSave()
 {
 	UpdateData(TRUE);
-
-	CString szTempItem;
 	int nCurIndex = m_ctrlItemList.GetCurSel();
-	if (nCurIndex==LB_ERR) nCurIndex = m_ctrlItemList.GetCount()-1;
+	CString szTempItem;
+
+	if (m_ctrlItemList.GetCount()==0 || nCurIndex==LB_ERR)
+	{
+		m_bIsFromSsave = true;
+		this->OnBnClickedButtonAdd();
+		return;
+	}
+
 	m_ctrlItemList.DeleteString(nCurIndex);
 	m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin()+nCurIndex);
 
 	if (PathFileExists(m_szFile))
-		szTempItem.Format(_T("%d: %s %s %s"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile);
+		szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] FilePath:[%s] File+ContentSize:[%d]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile,m_nSize);
 	else
-		szTempItem.Format(_T("%d: %s %s"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent);
+		szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent);
 	m_ctrlItemList.AddString(szTempItem);
 
-
+	//Fill the data model
 	MultiPartInfo cMulktiPartInfo;
 	cMulktiPartInfo.content = CT2CA(m_szContent);	
 	cMulktiPartInfo.header = CT2CA(m_szHeader);
 
 	cMulktiPartInfo.filePath = m_szFile;
-	if (PathFileExists(m_szFile))
-	{
-		CFile cFile;
-		if (cFile.Open(m_szFile,CFile::modeRead)) 
-		{
-			cMulktiPartInfo.dwFileSize = cFile.GetLength();
-			m_nFileSize = cFile.GetLength();
-			cFile.Close();
-		}
-	}
-	else
-	{
-		m_nFileSize = 0;
-		m_szFile += _T("    ------->  File doesn't exist!");
-	}
+	cMulktiPartInfo.dwFileSize = m_nFileSize;
+
 	m_nSize = m_nFileSize + m_nContentSize;
-	//m_vecMultiPartInfo.push_back(cMulktiPartInfo);
 	m_vecMultiPartInfo.insert(m_vecMultiPartInfo.begin()+nCurIndex,cMulktiPartInfo);
 
-	m_ctrlItemList.SetCurSel(m_ctrlItemList.GetCount()-1);
+	//set the selected one on UI
+	m_ctrlItemList.SetCurSel(LB_ERR);
+
+	this->Clear();
 
 	UpdateData(FALSE);
 }
@@ -197,4 +227,15 @@ void MultiPartDlg::OnEnChangeEditContent()
 
 	m_nSize = m_nContentSize + m_nFileSize;
 	UpdateData(FALSE);
+}
+
+
+void MultiPartDlg::Clear(void)
+{
+	m_szHeader = _T("");
+	m_szContent = _T("");
+	m_szFile = _T("");
+	m_nSize = 0;
+	m_nFileSize = 0;
+	m_nContentSize = 0;
 }
