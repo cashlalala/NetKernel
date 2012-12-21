@@ -646,59 +646,6 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, c
 	std::vector<MultiPartInfo> infoList;
 
 	dprintf(L"[NetKernel] Read the multipart list.");
-	// This callback called before unlock, so do not use OnStateCallback.
-	//CallBackAsLong("sii", "prepare", 0, 0);
-
-	// Read all multi part informations.
-	//int nTotalMultiPart = static_cast<int>(PyObject_Size(pPyMultiPart));
-	//for(int i=0; i<nTotalMultiPart; ++i)
-	//{
-	//	MultiPartInfo info;
-
-	//	wchar_t* lpwszFilePath = NULL;
-	//	PyObject* pPyIndex = Py_BuildValue("i", i);
-
-	//	PyObject* pPyMultiPartItem = PyObject_GetItem(pPyMultiPart, pPyIndex);
-	//	Py_XDECREF(pPyIndex);
-
-	//	// Read the header.
-	//	PyObject* pPyHeader = PyDict_GetItemString(pPyMultiPartItem, "header");
-	//	if(pPyHeader)
-	//		info.header = PyString_AsString(pPyHeader);
-
-	//	// Read the size of file.
-	//	PyObject* pFileSize = PyDict_GetItemString(pPyMultiPartItem, "filesize");
-	//	if(pFileSize)
-	//		info.dwFileSize = PyInt_AsLong(pFileSize);
-
-	//	// Read the file name. Should be Unicode string.
-	//	PyObject* pPyFilename = PyDict_GetItemString(pPyMultiPartItem, "filename");
-	//	if(pPyFilename)
-	//	{
-	//		PyObject* pUnicodeObj = PyUnicode_FromObject(pPyFilename);
-	//		size_t nNameBufSize = PyUnicode_GetSize(pUnicodeObj);
-	//		wchar_t* lpwszNameBuf = new wchar_t[nNameBufSize + 1];
-	//		size_t nReadSize = PyUnicode_AsWideChar((PyUnicodeObject*)pUnicodeObj, lpwszNameBuf, nNameBufSize);
-	//		lpwszNameBuf[nReadSize < nNameBufSize ? nReadSize : nNameBufSize] = 0;
-	//		info.filePath = lpwszNameBuf;
-	//		delete [] lpwszNameBuf;
-
-	//		dprintf(L"[NetKernel] File name: %s", info.filePath.c_str());
-	//	}
-
-	//	// Read content.
-	//	PyObject* pPyContent = PyDict_GetItemString(pPyMultiPartItem, "content");
-	//	if(pPyContent)
-	//	{
-	//		char* pContentBuffer = NULL;
-	//		Py_ssize_t contentSize = PyString_Size(pPyContent);
-	//		int nSize = PyString_AsStringAndSize(pPyContent, &pContentBuffer, &contentSize);
-	//		std::string strContent(pContentBuffer, size_t(contentSize));
-	//		info.content.swap(strContent);
-	//	}
-
-	//	infoList.push_back(info);
-	//}
 
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
