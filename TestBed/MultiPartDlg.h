@@ -25,7 +25,7 @@ public:
 	CString m_szContent;
 	CString m_szHeader;
 	CString m_szFile;
-	int m_nSize;
+	DWORD m_nSize;
 	afx_msg void OnBnClickedButtonOpenfile();
 	afx_msg void OnBnClickedButtonAdd();
 	CListBox m_ctrlItemList;
@@ -34,4 +34,7 @@ public:
 	CString m_szItemStrings;
 	afx_msg void OnLbnSelchangeListItemlist();
 	afx_msg void OnBnClickedButtonSave();
+	int m_nContentSize;
+	ULONGLONG m_nFileSize;
+	afx_msg void OnEnChangeEditContent();
 };

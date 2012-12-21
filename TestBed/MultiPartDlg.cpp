@@ -19,6 +19,8 @@ MultiPartDlg::MultiPartDlg(CWnd* pParent /*=NULL*/)
 	, m_szFile(_T(""))
 	, m_nSize(0)
 	, m_szItemStrings(_T(""))
+	, m_nContentSize(0)
+	, m_nFileSize(0)
 {
 
 }
@@ -30,6 +32,8 @@ MultiPartDlg::MultiPartDlg( std::vector<MultiPartInfo> vecItemList )
 	, m_szFile(_T(""))
 	, m_nSize(0)
 	, m_szItemStrings(_T(""))
+	, m_nContentSize(0)
+	, m_nFileSize(0)
 {
 	m_vecMultiPartInfo = vecItemList;
 }
@@ -47,6 +51,8 @@ void MultiPartDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SIZE, m_nSize);
 	DDX_Control(pDX, IDC_LIST_ITEMLIST, m_ctrlItemList);
 	DDX_LBString(pDX, IDC_LIST_ITEMLIST, m_szItemStrings);
+	DDX_Text(pDX, IDC_STATIC_ITEM_CONTENT, m_nContentSize);
+	DDX_Text(pDX, IDC_STATIC_FILE_SIZE, m_nFileSize);
 }
 
 
@@ -56,6 +62,7 @@ BEGIN_MESSAGE_MAP(MultiPartDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &MultiPartDlg::OnBnClickedButtonDelete)
 	ON_LBN_SELCHANGE(IDC_LIST_ITEMLIST, &MultiPartDlg::OnLbnSelchangeListItemlist)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &MultiPartDlg::OnBnClickedButtonSave)
+	ON_EN_CHANGE(IDC_EDIT_CONTENT, &MultiPartDlg::OnEnChangeEditContent)
 END_MESSAGE_MAP()
 
 
@@ -96,6 +103,7 @@ void MultiPartDlg::OnBnClickedButtonDelete()
 {
 	UpdateData(TRUE);
 	m_ctrlItemList.DeleteString(m_ctrlItemList.GetCurSel());
+	m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin()+m_ctrlItemList.GetCurSel());
 }
 
 BOOL MultiPartDlg::OnInitDialog()
@@ -137,6 +145,7 @@ void MultiPartDlg::OnBnClickedButtonSave()
 	int nCurIndex = m_ctrlItemList.GetCurSel();
 	if (nCurIndex==LB_ERR) nCurIndex = m_ctrlItemList.GetCount()-1;
 	m_ctrlItemList.DeleteString(nCurIndex);
+	m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin()+nCurIndex);
 
 	if (PathFileExists(m_szFile))
 		szTempItem.Format(_T("%d: %s %s %s"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile);
@@ -156,15 +165,36 @@ void MultiPartDlg::OnBnClickedButtonSave()
 		if (cFile.Open(m_szFile,CFile::modeRead)) 
 		{
 			cMulktiPartInfo.dwFileSize = cFile.GetLength();
+			m_nFileSize = cFile.GetLength();
 			cFile.Close();
 		}
 	}
 	else
+	{
+		m_nFileSize = 0;
 		m_szFile += _T("    ------->  File doesn't exist!");
-
-	m_vecMultiPartInfo.push_back(cMulktiPartInfo);
+	}
+	m_nSize = m_nFileSize + m_nContentSize;
+	//m_vecMultiPartInfo.push_back(cMulktiPartInfo);
+	m_vecMultiPartInfo.insert(m_vecMultiPartInfo.begin()+nCurIndex,cMulktiPartInfo);
 
 	m_ctrlItemList.SetCurSel(m_ctrlItemList.GetCount()-1);
 
+	UpdateData(FALSE);
+}
+
+
+void MultiPartDlg::OnEnChangeEditContent()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+	UpdateData(TRUE);
+	// TODO:  Add your control notification handler code here
+	CW2A szcContentSize(m_szContent);
+	m_nContentSize = strlen(szcContentSize);
+
+	m_nSize = m_nContentSize + m_nFileSize;
 	UpdateData(FALSE);
 }

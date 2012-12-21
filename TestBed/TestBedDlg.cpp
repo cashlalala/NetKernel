@@ -346,6 +346,8 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 		MultiPartDlg dlgMultiPartDlg(m_vecMultiPartInfo);
 		if (dlgMultiPartDlg.DoModal()==IDOK)
 		{
+			//m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin(),m_vecMultiPartInfo.end());
+			m_vecMultiPartInfo.clear();
 			m_vecMultiPartInfo = dlgMultiPartDlg.m_vecMultiPartInfo;
 			for (int i=0;i<m_vecMultiPartInfo.size();++i)
 			{
@@ -357,6 +359,8 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 				m_szMultiPartFileList += szTemp;
 			}
 		}
+		m_szMethod = _T("POST");
+		m_szUrl = _T("http://posttestserver.com/post.php?dir=example");
 		m_ctrlMultiPartFileList.EnableWindow(TRUE);
 	}
 	else
@@ -369,7 +373,17 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 
 void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
 {
-	// TODO: Add your control notification handler code here
+	UpdateData(TRUE);
+	HttpResponseValueObject httpResp;
 
-	//m_pNetKernel->SendHttpRequestMultipart()
+	CStringA szUrl = CT2CA(m_szUrl);
+	CStringA szMethod = CT2CA(m_szMethod);
+	CStringA szHeader = CT2CA(m_szHeader);
+
+	m_pNetKernel->SendHttpRequestMultipart(httpResp, AP_NAME,szUrl,szMethod,m_szProxy,szHeader,m_vecMultiPartInfo,10);
+
+	CString szResp(CA2W(httpResp.strResponse.c_str()));
+	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
+
+	UpdateData(FALSE);
 }
