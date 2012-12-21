@@ -73,6 +73,18 @@ struct INetKernel
 
 	/*
 	*  A primitive function with multipart/form-upload, You need to compose the required header & content by yourself
+	* Sample Post Http Message: 
+	Content-Type: multipart/form-data; boundary=----------
+	Content-Length: 433
+
+	1. Header:[------------
+	Content-Disposition: form-data; name="Video Without Title"; filename="C:\Users\cash_chang\Desktop\build.log"
+	Content-Type: application/octet-stream
+
+	] Content:[
+	--------------
+	] FilePath:[C:\Users\cash_chang\Desktop\build.log] Size:[433]
+
 	*/
 	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, 
 																	const CHAR* lpszApName, 
