@@ -28,7 +28,7 @@ struct HttpResponseValueObject
 	std::string strResponse; //The response of HTTP
 };
 
-struct UriValueObject
+struct UrlValueObject
 {
 	/*
 	* sample url: https://maps.google.com/maps?hl=zh-TW&tab=wl
@@ -37,7 +37,7 @@ struct UriValueObject
 	* strHost: maps.google.com
 	* dwPort : 0 ---(default)-->443 (the default port of https is 443, and the one of http is 80)
 	*/
-	UriValueObject()
+	UrlValueObject()
 	{
 		bSecure = FALSE;
 		dwPort = 0;
@@ -70,8 +70,10 @@ enum DEL_CACHE_TYPE
 
 struct INetKernel
 {
-	//void SetCallback(PyObject* callback);
 
+	/*
+	*  A primitive function with multipart/form-upload, You need to compose the required header & content by yourself
+	*/
 	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, 
 																	const CHAR* lpszApName, 
 																	const CHAR* lpszUri, 
@@ -83,7 +85,9 @@ struct INetKernel
 																	const WCHAR* lpwszResponse = NULL, 
 																	const WCHAR* lpwszDump = NULL) 
 																	= 0;
-
+	/*
+	*  A primitive function to send HTTP request, you need to compose the required header & content by yourself
+	*/
 	virtual DWORD SendHttpRequest(HttpResponseValueObject& httpResp, 
 														const CHAR* lpszApName, 
 														const CHAR* lpszMethod, 
@@ -97,6 +101,9 @@ struct INetKernel
 														const WCHAR* lpwszDump = NULL) 
 														= 0;
 
+	/*
+	*  A heuristic function to send HTTP request, you can just pass the uri to it.
+	*/
 	virtual DWORD OpenUrl(HttpResponseValueObject& httpResp, 
 											const CHAR* lpszUri, 
 											const CHAR* lpszMethod = NULL, 
@@ -107,20 +114,18 @@ struct INetKernel
 											DWORD dwContentLength = 0) //The size of body in Bytes. If the Body is mixed with unicode and ascii, please assign the right size of the string. 
 											= 0;
 
-	//PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
-	//	const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
-
 	virtual BOOL DeleteUrlCache(int type, const WCHAR* lpwszCookieName) = 0;
 
 	virtual void ForceStop() = 0;
 	virtual void SetDownloadCache(BOOL bCacheDownload) = 0;
 
-	virtual BOOL ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO) = 0;
+	virtual BOOL ResolveUrl(const CHAR* lpszUri, UrlValueObject& cUriVO) = 0;
+
+	typedef  INetKernel* (*PFNGETINSTANCE)();
+	typedef  void (*PFNDELINSTANCE)();
 
 	//For debug use
 	virtual void GetCacheFilePath(WCHAR* lpwszFileName) = 0;
 
-	typedef  INetKernel* (*PFNGETINSTANCE)();
-	typedef  void (*PFNDELINSTANCE)();
 };
 

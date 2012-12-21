@@ -61,7 +61,7 @@ public:
 
 	PyObject* ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse = NULL);
 
-	BOOL ResolveUrl(const CHAR* lpszUrl, UriValueObject& cUriVO);
+	BOOL ResolveUrl(const CHAR* lpszUrl, UrlValueObject& cUriVO);
 
 	BOOL DeleteUrlCache(int type, const WCHAR* lpwszCookieName);
 

@@ -1344,7 +1344,7 @@ void PyNetKernel::SetHaveRegToOLREG()
 }
 
 
-BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO)
+BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UrlValueObject& cUriVO)
 {
 	return ResolveUri(lpszUri, cUriVO.strRqstUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
 }

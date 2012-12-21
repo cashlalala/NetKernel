@@ -260,7 +260,7 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 	// TODO: Add your control notification handler code here
 	HttpResponseValueObject httpResp;
 
-	UriValueObject cUriVO;
+	UrlValueObject cUriVO;
 	m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
 
 	m_pNetKernel->SendHttpRequest(httpResp,
@@ -328,7 +328,7 @@ void CTestBedDlg::OnBnClickedCheckDownloadcache()
 	}
 	else
 	{
-		UriValueObject cUriVO;
+		UrlValueObject cUriVO;
 		m_pNetKernel->SetDownloadCache(FALSE);
 		m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
 		CA2W pszWide(cUriVO.strHost.c_str(), CP_UTF8);
