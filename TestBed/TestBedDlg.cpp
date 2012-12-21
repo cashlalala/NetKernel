@@ -6,6 +6,7 @@
 #include "TestBedDlg.h"
 #include <WinInet.h>
 #include "MultiPartDlg.h"
+#include <Shlwapi.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -346,7 +347,7 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 		MultiPartDlg dlgMultiPartDlg(m_vecMultiPartInfo);
 		if (dlgMultiPartDlg.DoModal()==IDOK)
 		{
-			//m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin(),m_vecMultiPartInfo.end());
+			m_szMultiPartFileList = _T("");
 			m_vecMultiPartInfo.clear();
 			m_vecMultiPartInfo = dlgMultiPartDlg.m_vecMultiPartInfo;
 			for (int i=0;i<m_vecMultiPartInfo.size();++i)
@@ -355,7 +356,16 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 				CString szContent = CA2W(m_vecMultiPartInfo[i].content.c_str());
 				CString szHeader = CA2W(m_vecMultiPartInfo[i].header.c_str());
 				CString szFilePath(m_vecMultiPartInfo[i].filePath.c_str());
-				szTemp.Format(_T("%d. Header:[%s] Content:[%s] FilePath:[%s] \r\n"),i+1, szFilePath,szContent,szHeader);
+
+				int nSize = 0;
+				if (PathFileExists(szFilePath)) 
+				{
+					CFile cFIle(szFilePath,CFile::modeRead);
+					nSize += cFIle.GetLength();
+				}
+				nSize += strlen(m_vecMultiPartInfo[i].content.c_str());
+				nSize += strlen(m_vecMultiPartInfo[i].header.c_str());
+				szTemp.Format(_T("%d. Header:[%s] Content:[%s] FilePath:[%s] Size:[%d]\r\n"),i+1,szHeader ,szContent,szFilePath,nSize);
 				m_szMultiPartFileList += szTemp;
 			}
 		}
@@ -365,6 +375,7 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 	}
 	else
 	{
+		m_szMultiPartFileList = _T("");
 		m_ctrlMultiPartFileList.EnableWindow(FALSE);
 	}
 	UpdateData(FALSE);
@@ -380,7 +391,7 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
 	CStringA szMethod = CT2CA(m_szMethod);
 	CStringA szHeader = CT2CA(m_szHeader);
 
-	m_pNetKernel->SendHttpRequestMultipart(httpResp, AP_NAME,szUrl,szMethod,m_szProxy,szHeader,m_vecMultiPartInfo,10);
+	m_pNetKernel->SendHttpRequestMultipart(httpResp, AP_NAME,szUrl,szMethod,m_szProxy,szHeader,m_vecMultiPartInfo,m_nContentLen);
 
 	CString szResp(CA2W(httpResp.strResponse.c_str()));
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);

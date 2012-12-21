@@ -39,4 +39,6 @@ public:
 	afx_msg void OnEnChangeEditContent();
 	void Clear(void);
 	bool m_bIsFromSsave;
+	afx_msg void OnEnChangeEditHeader();
+	int m_nHeaderSize;
 };
