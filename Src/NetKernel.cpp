@@ -1349,7 +1349,7 @@ BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO)
 	return ResolveUri(lpszUri, cUriVO.strRqstUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
 }
 
-void PyNetKernel::GetCacheFileName( WCHAR* lpwszFileName )
+void PyNetKernel::GetCacheFilePath( WCHAR* lpwszFileName )
 {
 	if (wcslen(m_lpcwszCookieFileName)==0) return;
 	wcscpy_s(lpwszFileName,wcslen(m_lpcwszCookieFileName)+1,m_lpcwszCookieFileName);

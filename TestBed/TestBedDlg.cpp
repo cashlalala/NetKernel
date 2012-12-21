@@ -248,7 +248,7 @@ void CTestBedDlg::OnBnClickedButtonOpenurl()
 	CA2W pBuffer(httpResp.strResponse.c_str());
 	CString szResp(pBuffer);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
-	m_pNetKernel->GetCacheFileName(m_szCacheName.GetBuffer(MAX_PATH+1));
+	m_pNetKernel->GetCacheFilePath(m_szCacheName.GetBuffer(MAX_PATH+1));
 	m_szCacheName.ReleaseBuffer();
 	UpdateData(FALSE);
 }

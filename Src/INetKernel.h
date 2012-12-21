@@ -72,11 +72,6 @@ struct INetKernel
 {
 	//void SetCallback(PyObject* callback);
 
-	//not used 
-	//virtual DWORD SendHttpContent(HttpResponse& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
-	//	DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
-	//	const WCHAR* lpwszResponse, const WCHAR* lpwszDump = NULL) = 0;
-
 	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, 
 																	const CHAR* lpszApName, 
 																	const CHAR* lpszUri, 
@@ -115,9 +110,6 @@ struct INetKernel
 	//PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 	//	const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
 
-	//not used
-	//PyObject* ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse = NULL);
-
 	virtual BOOL DeleteUrlCache(int type, const WCHAR* lpwszCookieName) = 0;
 
 	virtual void ForceStop() = 0;
@@ -126,7 +118,7 @@ struct INetKernel
 	virtual BOOL ResolveUrl(const CHAR* lpszUri, UriValueObject& cUriVO) = 0;
 
 	//For debug use
-	virtual void GetCacheFileName(WCHAR* lpwszFileName) = 0;
+	virtual void GetCacheFilePath(WCHAR* lpwszFileName) = 0;
 
 	typedef  INetKernel* (*PFNGETINSTANCE)();
 	typedef  void (*PFNDELINSTANCE)();

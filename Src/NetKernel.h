@@ -73,7 +73,7 @@ public:
 	PyObject* GetDZRegParams();
 	void SetHaveRegToOLREG();
 
-	void GetCacheFileName(WCHAR* lpwszFileName);
+	void GetCacheFilePath(WCHAR* lpwszFileName);
 
 #ifndef __SWIG__
 private:
