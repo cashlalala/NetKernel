@@ -36,6 +36,7 @@ MultiPartDlg::MultiPartDlg( std::vector<MultiPartInfo> vecItemList )
 	, m_szItemStrings(_T(""))
 	, m_nContentSize(0)
 	, m_nFileSize(0)
+	, m_nHeaderSize(0)
 {
 	m_vecMultiPartInfo = vecItemList;
 }
