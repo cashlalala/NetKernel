@@ -35,6 +35,9 @@
     <ClInclude Include="INetKernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="NetKernel.i" />

@@ -110,6 +110,7 @@
     <ClInclude Include="..\..\Utility\Debug.h" />
     <ClInclude Include="INetKernel.h" />
     <ClInclude Include="NetKernel.h" />
+    <ClInclude Include="SimpleEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="NetKernel.i">

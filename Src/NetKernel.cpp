@@ -178,7 +178,8 @@ m_hConnect(NULL),
 m_hRequest(NULL),
 m_bForceClose(FALSE),
 m_bCacheDownload(FALSE),
-m_hWnd(NULL)
+m_hWnd(NULL),
+m_cSimpleEvent(TRUE)
 {
 	memset(m_lpcwszCookieFileName,0x0,MAX_PATH+1);
 }
@@ -219,7 +220,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponseValueObject& httpResp, const CHAR
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 
-	//PYAUTO_UNLOCK
+	m_cSimpleEvent.Set();
 	do{
 		if(!PrepareConnection(m_hInternet, m_hConnect, m_hRequest, lpszApName, lpszMethod, lpszServer, dwPort, bSecure, lpszUrl))
 			continue;
@@ -256,7 +257,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponseValueObject& httpResp, const CHAR
 	// Close all handles.
 	CloseInternetHandle(m_hRequest, m_hConnect,  m_hInternet);
 
-	//PYAUTO_LOCK
+	m_cSimpleEvent.Reset();
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
 	httpResp.strResponse = strServerResponse;
@@ -651,7 +652,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, c
 	m_bForceClose = FALSE;
 	BOOL bSuccess = FALSE;
 
-	//PYAUTO_UNLOCK
+	m_cSimpleEvent.Set();
 	do{
 		if(!PrepareConnection(m_hInternet, m_hConnect, m_hRequest, lpszApName, lpszMethod, strHost.c_str(), dwPort, bSecure, strUrl.c_str()))
 			continue;
@@ -702,7 +703,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, c
 	// Close all handles.
 	CloseInternetHandle(m_hRequest, m_hConnect,  m_hInternet);
 
-	//PYAUTO_LOCK
+	m_cSimpleEvent.Reset();
 
 	if(m_bForceClose)
 	{
@@ -918,7 +919,7 @@ PyObject* PyNetKernel::SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMetho
 	char lpszHeaderBuffer[MAX_HEADER_SIZE];
 	DWORD dwHeaderSize = sizeof(lpszHeaderBuffer);
 
-	PYAUTO_UNLOCK
+	m_cSimpleEvent.Set();
 	do{
 		if(!SendUrlRequestImpl(lpszUri, lpszMethod, lpwszProxy, lpszHeader, pBodyBuffer, dwBodyLength, dwStatusCode, dwAvailableData, dwError))
 			continue;
@@ -928,7 +929,7 @@ PyObject* PyNetKernel::SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMetho
 
 		bSuccess = TRUE;
 	}while(0);
-	PYAUTO_LOCK
+	m_cSimpleEvent.Reset();
 
 	PyObject* pRet = NULL;
 	if(m_bForceClose)
@@ -954,14 +955,14 @@ PyObject* PyNetKernel::ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszR
 	// Change the flag before unlock.
 	m_bForceClose = FALSE;
 
-	PYAUTO_UNLOCK
+	m_cSimpleEvent.Set();
 	do{
 		if(!ReceiveUrlDataImpl(dwContentLength, lpwszResponse, pResBuffer, dwError))
 			continue;
 
 		bSuccess = TRUE;
 	}while(0);
-	PYAUTO_LOCK
+	m_cSimpleEvent.Reset();
 
 	PyObject* pRet = NULL;
 	if(m_bForceClose)
@@ -997,7 +998,7 @@ DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUr
 
 	if (pBodyBuffer && dwBodyLength == 0)
 		dwBodyLength = strlen(pBodyBuffer);
-	//PYAUTO_UNLOCK
+	m_cSimpleEvent.Set();
 	if(m_bCacheDownload)
 	{
 		// CacheCallbacker is a fake COM object and Release function would delete itself.
@@ -1048,7 +1049,7 @@ DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUr
 			bSuccess = TRUE;
 		} while(0);
 	}
-	//PYAUTO_LOCK
+	m_cSimpleEvent.Reset();
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
 	httpResp.strResponse = std::string(pResBuffer);
@@ -1126,7 +1127,7 @@ long PyNetKernel::OnStateCallBack(const char* lpszState, int nCurrent, int nTota
 	if(!m_callback)
 		return CALLBACK_OK;
 
-	PYAUTO_LOCK
+	m_cSimpleEvent.Reset();
 	return CallBackAsLong("sii", lpszState, nCurrent, nTotal);
 }
 

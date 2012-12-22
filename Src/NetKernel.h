@@ -8,6 +8,7 @@
 #include <wininet.h>
 #include <vector>
 #include <Urlmon.h>
+#include "SimpleEvent.h"
 
 #include "INetKernel.h"
 
@@ -117,6 +118,8 @@ private:
 	BOOL m_bCacheDownload;
 #endif
 	WCHAR m_lpcwszCookieFileName[MAX_PATH+1];
+
+	CSimpleEvent m_cSimpleEvent;
 };
 
 #ifndef __SWIG__
