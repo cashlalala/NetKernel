@@ -27,7 +27,6 @@ public:
 	CString m_szFile;
 	DWORD m_nSize;
 	afx_msg void OnBnClickedButtonOpenfile();
-	afx_msg void OnBnClickedButtonAdd();
 	CListBox m_ctrlItemList;
 	afx_msg void OnBnClickedButtonDelete();
 	std::vector<MultiPartInfo> m_vecMultiPartInfo;
@@ -41,4 +40,13 @@ public:
 	bool m_bIsFromSsave;
 	afx_msg void OnEnChangeEditHeader();
 	int m_nHeaderSize;
+private:
+	void RefreshLayout(void);
+public:
+	afx_msg void OnBnClickedButtonRemoveall();
+	afx_msg void OnBnClickedButton2();
+	CString m_szHeaderRef;
+	afx_msg void OnEnChangeEditFilepath();
+
+	void GenRefFileHeaderString(CString szFile) ;
 };

@@ -5,9 +5,9 @@
 #include "TestBed.h"
 #include "MultiPartDlg.h"
 #include "Shlwapi.h"
-//#include "afxdialogex.h"
+#include <vector>
 
-
+using std::vector;
 // MultiPartDlg dialog
 
 IMPLEMENT_DYNAMIC(MultiPartDlg, CDialog)
@@ -23,6 +23,7 @@ MultiPartDlg::MultiPartDlg(CWnd* pParent /*=NULL*/)
 	, m_nFileSize(0)
 	, m_bIsFromSsave(false)
 	, m_nHeaderSize(0)
+	, m_szHeaderRef(_T(""))
 {
 
 }
@@ -57,17 +58,20 @@ void MultiPartDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_ITEM_CONTENT, m_nContentSize);
 	DDX_Text(pDX, IDC_STATIC_FILE_SIZE, m_nFileSize);
 	DDX_Text(pDX, IDC_STATIC_HEADER_SIZE, m_nHeaderSize);
+	DDX_Text(pDX, IDC_EDIT1, m_szHeaderRef);
 }
 
 
 BEGIN_MESSAGE_MAP(MultiPartDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_OPENFILE, &MultiPartDlg::OnBnClickedButtonOpenfile)
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &MultiPartDlg::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &MultiPartDlg::OnBnClickedButtonDelete)
 	ON_LBN_SELCHANGE(IDC_LIST_ITEMLIST, &MultiPartDlg::OnLbnSelchangeListItemlist)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &MultiPartDlg::OnBnClickedButtonSave)
 	ON_EN_CHANGE(IDC_EDIT_CONTENT, &MultiPartDlg::OnEnChangeEditContent)
 	ON_EN_CHANGE(IDC_EDIT_HEADER, &MultiPartDlg::OnEnChangeEditHeader)
+	ON_BN_CLICKED(IDC_BUTTON_REMOVEALL, &MultiPartDlg::OnBnClickedButtonRemoveall)
+	ON_BN_CLICKED(IDC_BUTTON2, &MultiPartDlg::OnBnClickedButton2)
+	ON_EN_CHANGE(IDC_EDIT_FILEPATH, &MultiPartDlg::OnEnChangeEditFilepath)
 END_MESSAGE_MAP()
 
 
@@ -91,6 +95,7 @@ void MultiPartDlg::OnBnClickedButtonOpenfile()
 				m_nSize = m_nContentSize + m_nFileSize + m_nHeaderSize;;
 				cFile.Close();
 			}
+			this->GenRefFileHeaderString(m_szFile);
 		}
 		else
 		{
@@ -101,40 +106,21 @@ void MultiPartDlg::OnBnClickedButtonOpenfile()
 	UpdateData(FALSE);
 }
 
-void MultiPartDlg::OnBnClickedButtonAdd()
-{
-	UpdateData(TRUE);
-	CString szTempItem;
-	MultiPartInfo cMultiPartInfo;	
-	if (m_bIsFromSsave)
-	{
-		//szTempItem.Format(_T("%d. Header:[%s] Content:[%s] Filepath:[%s]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile);
-		szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] FilePath:[%s] TotalSize(Head+Content+File):[%d]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile,m_nSize);
-		
-		cMultiPartInfo.content = CW2A(m_szContent);
-		cMultiPartInfo.dwFileSize = m_nFileSize;
-		cMultiPartInfo.filePath = m_szFile;
-		cMultiPartInfo.header = CW2A(m_szHeader);		
-	}
-	else 
-	{	
-		szTempItem.Format(_T("%d,"),m_ctrlItemList.GetCount()+1);
-	}
-	m_vecMultiPartInfo.push_back(cMultiPartInfo);
-	m_ctrlItemList.AddString(szTempItem);
-	m_bIsFromSsave = false;
-	m_ctrlItemList.SetCurSel(LB_ERR);
-	this->Clear();
-
-	UpdateData(FALSE);
-}
-
-
 void MultiPartDlg::OnBnClickedButtonDelete()
 {
 	UpdateData(TRUE);
+	if (m_ctrlItemList.GetCurSel()==LB_ERR)
+	{
+		MessageBox(_T("Please select one item"));
+		return;
+	}
+	int sel = m_ctrlItemList.GetCurSel();
 	m_ctrlItemList.DeleteString(m_ctrlItemList.GetCurSel());
-	m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin()+m_ctrlItemList.GetCurSel());
+	m_vecMultiPartInfo.erase((m_vecMultiPartInfo.begin()+sel));
+
+	RefreshLayout();
+	m_ctrlItemList.SetCurSel(LB_ERR);
+	UpdateData(FALSE);
 }
 
 BOOL MultiPartDlg::OnInitDialog()
@@ -164,6 +150,7 @@ BOOL MultiPartDlg::OnInitDialog()
 
 void MultiPartDlg::OnLbnSelchangeListItemlist()
 {
+	UpdateData(TRUE);
 	// TODO: Add your control notification handler code here
 	this->Clear();
 
@@ -181,6 +168,7 @@ void MultiPartDlg::OnLbnSelchangeListItemlist()
 		CFile cFile(m_vecMultiPartInfo[nCurItem].filePath.c_str(),CFile::modeRead);
 		m_nFileSize = cFile.GetLength();
 	}
+	m_ctrlItemList.SetCurSel(nCurItem);
 	UpdateData(FALSE);
 }
 
@@ -191,35 +179,23 @@ void MultiPartDlg::OnBnClickedButtonSave()
 	int nCurIndex = m_ctrlItemList.GetCurSel();
 	CString szTempItem;
 
-	if (m_ctrlItemList.GetCount()==0 || nCurIndex==LB_ERR)
+	if (m_vecMultiPartInfo.size()==0 || nCurIndex==LB_ERR)
 	{
-		m_bIsFromSsave = true;
-		this->OnBnClickedButtonAdd();
-		return;
+		nCurIndex = m_vecMultiPartInfo.size();
+		m_vecMultiPartInfo.push_back(MultiPartInfo());
 	}
 
-	m_ctrlItemList.DeleteString(nCurIndex);
-	m_vecMultiPartInfo.erase(m_vecMultiPartInfo.begin()+nCurIndex);
-
-	if (PathFileExists(m_szFile))
-		szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] FilePath:[%s] TotalSize(Head+Content+File):[%d]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent, m_szFile,m_nSize);
-	else
-		szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] TotalSize(Head+Content+File):[%d]"),m_ctrlItemList.GetCount()+1,m_szHeader,m_szContent,m_nSize);
-	m_ctrlItemList.AddString(szTempItem);
-
 	//Fill the data model
-	MultiPartInfo cMulktiPartInfo;
-	cMulktiPartInfo.content = CT2CA(m_szContent);	
-	cMulktiPartInfo.header = CT2CA(m_szHeader);
+	MultiPartInfo* cMulktiPartInfo = &m_vecMultiPartInfo.at(nCurIndex);
+	cMulktiPartInfo->content = CT2CA(m_szContent);	
+	cMulktiPartInfo->header = CT2CA(m_szHeader);
 
-	cMulktiPartInfo.filePath = m_szFile;
-	cMulktiPartInfo.dwFileSize = m_nFileSize;
+	cMulktiPartInfo->filePath = m_szFile;
+	cMulktiPartInfo->dwFileSize = m_nFileSize;
 
 	m_nSize = m_nFileSize + m_nContentSize + m_nHeaderSize;
-	m_vecMultiPartInfo.insert(m_vecMultiPartInfo.begin()+nCurIndex,cMulktiPartInfo);
 
-	//set the selected one on UI
-	m_ctrlItemList.SetCurSel(LB_ERR);
+	RefreshLayout();
 
 	this->Clear();
 
@@ -229,10 +205,6 @@ void MultiPartDlg::OnBnClickedButtonSave()
 
 void MultiPartDlg::OnEnChangeEditContent()
 {
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
 	UpdateData(TRUE);
 	// TODO:  Add your control notification handler code here
 	CW2A szcContentSize(m_szContent);
@@ -251,17 +223,13 @@ void MultiPartDlg::Clear(void)
 	m_nSize = 0;
 	m_nFileSize = 0;
 	m_nContentSize = 0;
+	m_nHeaderSize = 0;
+	m_szHeaderRef = _T("");
 }
 
 
 void MultiPartDlg::OnEnChangeEditHeader()
 {
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
 	UpdateData(TRUE);
 	// TODO:  Add your control notification handler code here
 	CW2A szHeader(m_szHeader);
@@ -269,4 +237,69 @@ void MultiPartDlg::OnEnChangeEditHeader()
 
 	m_nSize = m_nContentSize + m_nFileSize + m_nHeaderSize;
 	UpdateData(FALSE);
+}
+
+
+void MultiPartDlg::RefreshLayout(void)
+{
+	m_ctrlItemList.ResetContent();
+	CString szTempItem;
+	for (vector<MultiPartInfo>::iterator it = m_vecMultiPartInfo.begin();it!=m_vecMultiPartInfo.end();++it)
+	{
+		MultiPartInfo cMultiPartInfo = *it;
+		CString szHeader(CA2W(cMultiPartInfo.header.c_str())) ;
+		CString szContent(CA2W(cMultiPartInfo.content.c_str()));
+		DWORD dwSize = cMultiPartInfo.header.length() + cMultiPartInfo.content.length();
+		if (PathFileExists(cMultiPartInfo.filePath.c_str()))
+		{
+			CFile cFile(cMultiPartInfo.filePath.c_str(),CFile::modeRead);
+			dwSize += cFile.GetLength();
+			szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] FilePath:[%s] TotalSize(Head+Content+File):[%d]"),
+											m_ctrlItemList.GetCount()+1,szHeader,
+											szContent, cMultiPartInfo.filePath.c_str(),dwSize);
+		}
+		else
+		{
+			szTempItem.Format(_T("%d, Header:[%s] Contnet:[%s] TotalSize(Head+Content+File):[%d]"),
+				m_ctrlItemList.GetCount()+1,szHeader,
+				szContent, dwSize);
+		}
+
+		m_ctrlItemList.AddString(szTempItem);
+	}
+}
+
+
+void MultiPartDlg::OnBnClickedButtonRemoveall()
+{
+	m_ctrlItemList.ResetContent();
+	m_vecMultiPartInfo.clear();
+}
+
+
+void MultiPartDlg::OnBnClickedButton2()
+{
+	this->Clear();
+	UpdateData(FALSE);
+}
+
+
+void MultiPartDlg::OnEnChangeEditFilepath()
+{
+	UpdateData(TRUE);
+	GenRefFileHeaderString(m_szFile);
+	UpdateData(FALSE);
+}
+
+void MultiPartDlg::GenRefFileHeaderString( CString szFile )
+{
+	CString szBuffer = szFile;
+	TCHAR* lpszBuffer = szBuffer.GetBuffer(MAX_PATH);
+	PathStripPath(lpszBuffer);
+
+	m_szHeaderRef.Format(
+		_T("¡õ¡õ¡õ¡õ¡õ¡õ¡õ¡õ¡õ¡õ\r\n------------\r\nContent-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n\r\n\r\n¡ô¡ô¡ô¡ô¡ô¡ô¡ô¡ô¡ô¡ô"),
+		lpszBuffer,lpszBuffer);
+
+	szBuffer.ReleaseBuffer();
 }

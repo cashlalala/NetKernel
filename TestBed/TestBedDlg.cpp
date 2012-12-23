@@ -347,30 +347,11 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 		MultiPartDlg dlgMultiPartDlg(m_vecMultiPartInfo);
 		if (dlgMultiPartDlg.DoModal()==IDOK)
 		{
-			m_szMultiPartFileList = _T("");
-			m_vecMultiPartInfo.clear();
-			m_vecMultiPartInfo = dlgMultiPartDlg.m_vecMultiPartInfo;
-			for (int i=0;i<m_vecMultiPartInfo.size();++i)
-			{
-				CString szTemp;
-				CString szContent = CA2W(m_vecMultiPartInfo[i].content.c_str());
-				CString szHeader = CA2W(m_vecMultiPartInfo[i].header.c_str());
-				CString szFilePath(m_vecMultiPartInfo[i].filePath.c_str());
-
-				int nSize = 0;
-				if (PathFileExists(szFilePath)) 
-				{
-					CFile cFIle(szFilePath,CFile::modeRead);
-					nSize += cFIle.GetLength();
-				}
-				nSize += strlen(m_vecMultiPartInfo[i].content.c_str());
-				nSize += strlen(m_vecMultiPartInfo[i].header.c_str());
-				szTemp.Format(_T("%d. Header:[%s] Content:[%s] FilePath:[%s] Size:[%d]\r\n"),i+1,szHeader ,szContent,szFilePath,nSize);
-				m_szMultiPartFileList += szTemp;
-			}
+			GenMultiPartDisplayStirng(dlgMultiPartDlg.m_vecMultiPartInfo);
+			GenAdditionalHeaderString(m_nContentLen);
+			m_szMethod = _T("POST");
+			m_szUrl = _T("http://posttestserver.com/post.php?dir=example");
 		}
-		m_szMethod = _T("POST");
-		m_szUrl = _T("http://posttestserver.com/post.php?dir=example");
 		m_ctrlMultiPartFileList.EnableWindow(TRUE);
 	}
 	else
@@ -397,4 +378,39 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 
 	UpdateData(FALSE);
+}
+
+void CTestBedDlg::GenMultiPartDisplayStirng( std::vector<MultiPartInfo> vecMultiPartInfo )
+{
+	m_szMultiPartFileList = _T("");
+	m_vecMultiPartInfo.clear();
+	m_vecMultiPartInfo = vecMultiPartInfo;
+	for (int i=0;i<m_vecMultiPartInfo.size();++i)
+	{
+		CString szTemp;
+		CString szContent = CA2W(m_vecMultiPartInfo[i].content.c_str());
+		CString szHeader = CA2W(m_vecMultiPartInfo[i].header.c_str());
+		CString szFilePath(m_vecMultiPartInfo[i].filePath.c_str());
+
+		m_nContentLen = strlen(CT2CA(m_szBody));
+		int nSize = 0;
+		if (PathFileExists(szFilePath)) 
+		{
+			CFile cFIle(szFilePath,CFile::modeRead);
+			nSize += cFIle.GetLength();
+		}
+		nSize += strlen(m_vecMultiPartInfo[i].content.c_str());
+		nSize += strlen(m_vecMultiPartInfo[i].header.c_str());
+		szTemp.Format(_T("%d. Header:[%s] Content:[%s] FilePath:[%s] Size:[%d]\r\n"),i+1,szHeader ,szContent,szFilePath,nSize);
+
+		m_szMultiPartFileList += szTemp;
+		m_nContentLen += nSize;
+	}
+}
+
+void CTestBedDlg::GenAdditionalHeaderString( DWORD nSize )
+{
+	CString szBuffer ;
+	szBuffer.Format(_T("\r\nContent-Type: multipart/form-data; boundary=%s\r\n\Content-Length: %d\r\n"),BOUNDARY,nSize);
+	m_szHeader += szBuffer;
 }

@@ -37,6 +37,7 @@
 #define IDC_EDIT_CACHENAME              1022
 #define IDC_CHECK_MultiPart             1023
 #define IDC_BUTTON_ADD                  1025
+#define IDC_BUTTON_REMOVEALL            1025
 #define IDC_LIST_ITEMLIST               1026
 #define IDC_BUTTON_OPENFILE             1027
 #define IDC_EDIT_FILEPATH               1028

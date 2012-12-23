@@ -73,3 +73,4 @@
 
 
 #define AP_NAME "NetKernelTestClient"
+#define BOUNDARY _T("----------")

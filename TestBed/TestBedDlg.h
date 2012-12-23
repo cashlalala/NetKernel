@@ -60,6 +60,10 @@ public:
 	BOOL m_bIsCache;
 	CString m_szCacheName;
 	afx_msg void OnBnClickedCheckMultipart();
+
+	void GenMultiPartDisplayStirng( std::vector<MultiPartInfo> dlgMultiPartDlg );
+	void GenAdditionalHeaderString(DWORD nSize);
+
 	CButton m_ctrlEnableMulPart;
 	CString m_szMultiPartFileList;
 	CEdit m_ctrlMultiPartFileList;
