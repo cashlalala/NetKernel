@@ -22,6 +22,7 @@
 #define IDC_STATIC_URL                  1008
 #define IDC_EDIT_OPENURL_CONTENTLEN2    1009
 #define IDC_BUTTON_SEND                 1010
+#define IDC_EDIT_THREAD_CNT             1010
 #define IDC_BUTTON2                     1011
 #define IDC_BUTTON_OpenUrl              1012
 #define IDC_EDIT1                       1013
@@ -36,6 +37,8 @@
 #define IDC_CHECK_DOWNLOADCACHE         1021
 #define IDC_EDIT_CACHENAME              1022
 #define IDC_CHECK_MultiPart             1023
+#define IDC_CHECK_MultiPart2            1024
+#define IDC_CHECK_THREADTEST            1024
 #define IDC_BUTTON_ADD                  1025
 #define IDC_BUTTON_REMOVEALL            1025
 #define IDC_LIST_ITEMLIST               1026

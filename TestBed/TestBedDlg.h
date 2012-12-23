@@ -70,4 +70,12 @@ public:
 	std::vector<MultiPartInfo> m_vecMultiPartInfo;
 	int m_nItemCnt;
 	afx_msg void OnBnClickedButtonSendhttprequestmultipart();
+	afx_msg void OnBnClickedCheckThreadtest();
+	CButton m_ctrlChkBoxThdTest;
+	DWORD m_dwThreadCnt;
+	CEdit m_ctrlThreadCnt;
+
+	void ExcuteSendHttpRqst();
+	void ExcuteOpenUrl();
+	void ExcuteSendMultiPart();
 };

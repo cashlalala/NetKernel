@@ -63,6 +63,7 @@ CTestBedDlg::CTestBedDlg(CWnd* pParent /*=NULL*/)
 	, m_szCacheName(_T(""))
 	, m_szMultiPartFileList(_T(""))
 	, m_nItemCnt(0)
+	, m_dwThreadCnt(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pNetKernel = ((CTestBedApp*)AfxGetApp())->m_pNetKernel;
@@ -86,6 +87,11 @@ void CTestBedDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_MultiPart, m_ctrlEnableMulPart);
 	DDX_Text(pDX, IDC_EDIT_SENDRQSTMULTIPART, m_szMultiPartFileList);
 	DDX_Control(pDX, IDC_EDIT_SENDRQSTMULTIPART, m_ctrlMultiPartFileList);
+	DDX_Control(pDX, IDC_CHECK_THREADTEST, m_ctrlChkBoxThdTest);
+	DDX_Text(pDX, IDC_EDIT_THREAD_CNT, m_dwThreadCnt);
+	DDX_Control(pDX, IDC_EDIT_THREAD_CNT, m_ctrlThreadCnt);
+	DDV_MinMaxUInt(pDX, m_dwThreadCnt, 0, 100);
+	
 }
 
 BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
@@ -102,6 +108,7 @@ BEGIN_MESSAGE_MAP(CTestBedDlg, CDialog)
 	ON_BN_CLICKED(IDC_CHECK_DOWNLOADCACHE, &CTestBedDlg::OnBnClickedCheckDownloadcache)
 	ON_BN_CLICKED(IDC_CHECK_MultiPart, &CTestBedDlg::OnBnClickedCheckMultipart)
 	ON_BN_CLICKED(IDC_BUTTON_SendHttpRequestMultipart, &CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart)
+	ON_BN_CLICKED(IDC_CHECK_THREADTEST, &CTestBedDlg::OnBnClickedCheckThreadtest)
 END_MESSAGE_MAP()
 
 
@@ -280,6 +287,23 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 }
 
 
+void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
+{
+	UpdateData(TRUE);
+	HttpResponseValueObject httpResp;
+
+	CStringA szUrl = CT2CA(m_szUrl);
+	CStringA szMethod = CT2CA(m_szMethod);
+	CStringA szHeader = CT2CA(m_szHeader);
+
+	m_pNetKernel->SendHttpRequestMultipart(httpResp, AP_NAME,szUrl,szMethod,m_szProxy,szHeader,m_vecMultiPartInfo,m_nContentLen);	
+
+	CString szResp(CA2W(httpResp.strResponse.c_str()));
+	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
+
+	UpdateData(FALSE);
+}
+
 void CTestBedDlg::OnEnChangeEditOpenurlBody()
 {
 	// TODO:  If this is a RICHEDIT control, the control will not
@@ -363,23 +387,6 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 }
 
 
-void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
-{
-	UpdateData(TRUE);
-	HttpResponseValueObject httpResp;
-
-	CStringA szUrl = CT2CA(m_szUrl);
-	CStringA szMethod = CT2CA(m_szMethod);
-	CStringA szHeader = CT2CA(m_szHeader);
-
-	m_pNetKernel->SendHttpRequestMultipart(httpResp, AP_NAME,szUrl,szMethod,m_szProxy,szHeader,m_vecMultiPartInfo,m_nContentLen);
-
-	CString szResp(CA2W(httpResp.strResponse.c_str()));
-	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
-
-	UpdateData(FALSE);
-}
-
 void CTestBedDlg::GenMultiPartDisplayStirng( std::vector<MultiPartInfo> vecMultiPartInfo )
 {
 	m_szMultiPartFileList = _T("");
@@ -413,4 +420,33 @@ void CTestBedDlg::GenAdditionalHeaderString( DWORD nSize )
 	CString szBuffer ;
 	szBuffer.Format(_T("\r\nContent-Type: multipart/form-data; boundary=%s\r\n\Content-Length: %d\r\n"),BOUNDARY,nSize);
 	m_szHeader += szBuffer;
+}
+
+
+void CTestBedDlg::OnBnClickedCheckThreadtest()
+{
+	UpdateData(TRUE);
+	if (m_ctrlChkBoxThdTest.GetCheck())
+	{
+		m_ctrlThreadCnt.EnableWindow(TRUE);
+	}
+	else
+	{
+		m_ctrlThreadCnt.EnableWindow(FALSE);
+	}
+	UpdateData(FALSE);
+}
+
+void CTestBedDlg::ExcuteSendHttpRqst()
+{
+}
+
+void CTestBedDlg::ExcuteOpenUrl()
+{
+
+}
+
+void CTestBedDlg::ExcuteSendMultiPart()
+{
+
 }
