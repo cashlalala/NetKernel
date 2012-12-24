@@ -1380,10 +1380,15 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 //PyNetKernel* PyNetKernel::m_pInstance = new PyNetKernel();
 
-INetKernel* GetNetKernelInstance()
+INetKernel* GetSingletonInstance()
 {
 	static PyNetKernel pyNetKernel;
 	return &pyNetKernel;
+}
+
+INetKernel* GetInstance()
+{
+	return new PyNetKernel();
 }
 
 //void DeleteInstance()

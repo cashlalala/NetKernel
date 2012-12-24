@@ -40,7 +40,7 @@ BOOL NetKernelLoader::LoadDll( void )
 INetKernel* NetKernelLoader::GetInstance( void )
 {
 	//PFNGETINSTANCE pFn = (PFNGETINSTANCE) GetProcAddress(m_hNetKernel,"_GetNetKernelInstance@0");
-	INetKernel::PFNGETINSTANCE pFn = (INetKernel::PFNGETINSTANCE) GetProcAddress(m_hNetKernel,"GetNetKernelInstance");
+	INetKernel::PFNGETINSTANCE pFn = (INetKernel::PFNGETINSTANCE) GetProcAddress(m_hNetKernel,"GetSingletonInstance");
 	return pFn();
 }
 

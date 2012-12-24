@@ -24,7 +24,8 @@ class CacheCallbacker;
 class PyNetKernel;
 #endif
 
-extern "C" __declspec(dllexport) INetKernel* GetNetKernelInstance();
+extern "C" __declspec(dllexport) INetKernel* GetSingletonInstance();
+extern "C" __declspec(dllexport) INetKernel* GetInstance();
 
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
