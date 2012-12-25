@@ -68,11 +68,15 @@ enum DEL_CACHE_TYPE
 	Cookie
 };
 
+#define HTTP_METHOD_GET			"GET"
+#define HTTP_METHOD_POST			"POST"
+
 struct INetKernel
 {
 
 	/*
-	*  A primitive function with multipart/form-upload, You need to compose the required header & content by yourself
+	*  A primitive function with multipart/form-upload, You need to compose the required header & content by yourself.
+	*  Every "return" and "boundary" counts!
 	* Sample Post Http Message: 
 	Content-Type: multipart/form-data; boundary=----------
 	Content-Length: 433

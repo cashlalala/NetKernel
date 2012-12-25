@@ -387,6 +387,8 @@ BOOL PyNetKernel::ReceiveResponseToFile(HINTERNET& hRequest, DWORD dwContentLeng
 		return FALSE;
 	}
 
+	if (outResponse.fail()) return FALSE;
+
 	char *pBuffer = new char[MAX_PER_READ];
 	DWORD dwRead = 0;
 	DWORD dwTotalRead = 0;
@@ -1056,9 +1058,9 @@ DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUr
 	m_cSimpleEvent.Reset();
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse = std::string(pResBuffer);
 	if (pResBuffer)
 	{
+		httpResp.strResponse = std::string(pResBuffer);
 		delete[] pResBuffer;
 		pResBuffer = NULL;
 	}
