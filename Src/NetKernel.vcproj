@@ -68,9 +68,8 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="F:\KOAN\sdk\lib;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib&quot;;C:\Python\Python25x86\libs;F:\Strmbase.2005\bin"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/_NetKernel.pdb"
 				SubSystem="2"
-				ImportLibrary=".\Debug/_NetKernel.lib"
+				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool

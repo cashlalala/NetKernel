@@ -134,7 +134,7 @@ struct INetKernel
 	virtual BOOL ResolveUrl(const CHAR* lpszUri, UrlValueObject& cUriVO) = 0;
 
 	typedef  INetKernel* (*PFNGETINSTANCE)();
-	typedef  void (*PFNDELINSTANCE)();
+	typedef  void (*PFNDELINSTANCE)(INetKernel*);
 
 	//For debug use
 	virtual void GetCacheFilePath(WCHAR* lpwszFileName) = 0;

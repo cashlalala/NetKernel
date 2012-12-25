@@ -11,6 +11,10 @@
 #include <vector>
 #include <sys/stat.h>
 #include <Shlwapi.h>
+#include <list>
+#include <algorithm>
+
+using std::list;
 
 #ifdef _MANAGED
 #pragma managed(push, off)
@@ -1378,7 +1382,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-//PyNetKernel* PyNetKernel::m_pInstance = new PyNetKernel();
+//Init with dll main
+static list<PyNetKernel*> g_listNetKernel;
 
 INetKernel* GetSingletonInstance()
 {
@@ -1388,17 +1393,32 @@ INetKernel* GetSingletonInstance()
 
 INetKernel* GetInstance()
 {
-	return new PyNetKernel();
+	PyNetKernel* pInst = new PyNetKernel();
+	g_listNetKernel.push_back(pInst);
+	return pInst;
 }
 
-//void DeleteInstance()
-//{
-//	if (PyNetKernel::m_pInstance)
-//	{
-//		delete PyNetKernel::m_pInstance;
-//		PyNetKernel::m_pInstance = NULL;
-//	}
-//}
+
+void DeleteInstance(INetKernel* pInst)
+{
+	if (pInst!=NULL)
+	{
+		list<PyNetKernel*>::iterator it = find(g_listNetKernel.begin(),g_listNetKernel.end(),pInst);
+		delete *it;
+		*it = NULL;
+		g_listNetKernel.erase(it);
+		return;
+	}
+
+	for (list<PyNetKernel*>::iterator it=g_listNetKernel.begin();it!=g_listNetKernel.end();++it)
+	{
+		delete *it;
+		*it = NULL;
+		g_listNetKernel.erase(it);
+		pInst = NULL;
+	}
+
+}
 
 #ifdef _MANAGED
 #pragma managed(pop)
