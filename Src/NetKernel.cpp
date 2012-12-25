@@ -1,7 +1,6 @@
 // NetKernel.cpp : Defines the entry point for the DLL application.
 //
 #include "koan.h"
-#include <windows.h>
 #include "NetKernel.h"
 #include "..\..\utility\debug.h"
 #include <string>

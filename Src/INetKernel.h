@@ -15,6 +15,18 @@
 #include <string>
 #include <vector>
 
+#ifndef WIN32
+	typedef DWORD unsigned long;
+	typedef WCHAR wchar_t;
+	typedef CHAR char;
+	typedef BOOL int;
+#else
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+	#endif
+	#include <windows.h>
+#endif
+
 
 struct HttpResponseValueObject
 {
