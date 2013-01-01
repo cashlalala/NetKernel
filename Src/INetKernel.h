@@ -28,16 +28,16 @@
 #endif
 
 
-struct HttpResponseValueObject
+struct HttpRespValObj
 {
-	HttpResponseValueObject()
+	HttpRespValObj()
 	{
 		dwError = 0;
 		dwStatusCode = 0;
 	}
 	DWORD dwError; //The error code returned by Win32 API
 	DWORD dwStatusCode; //The status code of HTTP
-	std::string strResponse; //The response of HTTP
+	std::string szResp; //The response of HTTP
 };
 
 struct UrlValueObject
@@ -102,7 +102,7 @@ struct INetKernel
 	] FilePath:[C:\Users\cash_chang\Desktop\build.log] Size:[433]
 
 	*/
-	virtual DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, 
+	virtual DWORD SendHttpRequestMultipart(HttpRespValObj& httpResp, 
 																	const CHAR* lpszApName, 
 																	const CHAR* lpszUri, 
 																	const CHAR* lpszMethod,
@@ -116,7 +116,7 @@ struct INetKernel
 	/*
 	*  A primitive function to send HTTP request, you need to compose the required header & content by yourself
 	*/
-	virtual DWORD SendHttpRequest(HttpResponseValueObject& httpResp, 
+	virtual DWORD SendHttpRequest(HttpRespValObj& httpResp, 
 														const CHAR* lpszApName, 
 														const CHAR* lpszMethod, 
 														const CHAR* lpszServer, 
@@ -132,7 +132,7 @@ struct INetKernel
 	/*
 	*  A heuristic function to send HTTP request, you can just pass the uri to it.
 	*/
-	virtual DWORD OpenUrl(HttpResponseValueObject& httpResp, 
+	virtual DWORD OpenUrl(HttpRespValObj& httpResp, 
 											const CHAR* lpszUri, 
 											const CHAR* lpszMethod = NULL, 
 											const WCHAR* lpwszProxy = NULL, 

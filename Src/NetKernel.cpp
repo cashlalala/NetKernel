@@ -202,7 +202,7 @@ void PyNetKernel::SetCallback(PyObject* callback)
 
 
 // Send text body request.
-DWORD PyNetKernel::SendHttpRequest(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
+DWORD PyNetKernel::SendHttpRequest(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
 	BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
 	return SendHttpContent(httpResp, lpszApName, lpszMethod, lpszServer, wPort, bSecure, lpszUrl, lpszHeader,
@@ -211,7 +211,7 @@ DWORD PyNetKernel::SendHttpRequest(HttpResponseValueObject& httpResp, const CHAR
 
 
 // The function to do all send data jobs.
-DWORD PyNetKernel::SendHttpContent(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+DWORD PyNetKernel::SendHttpContent(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 	DWORD dwPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader,
 	const CHAR* lpBody, DWORD dwLength, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -263,7 +263,7 @@ DWORD PyNetKernel::SendHttpContent(HttpResponseValueObject& httpResp, const CHAR
 	m_cSimpleEvent.Reset();
 	httpResp.dwError = (m_bForceClose)? (int) ERROR_FORCECCLOSE : dwError;
 	httpResp.dwStatusCode = dwStatusCode;
-	httpResp.strResponse = strServerResponse;
+	httpResp.szResp = strServerResponse;
 	return dwError;
 }
 
@@ -634,7 +634,7 @@ BOOL PyNetKernel::WriteMultipartBody(HINTERNET& hRequest, std::vector<MultiPartI
 //
 // The parameters above must give, even the data is empty, caller should give like: 'filename':u''
 //
-DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+DWORD PyNetKernel::SendHttpRequestMultipart(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
 	const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 	const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -723,7 +723,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpResponseValueObject& httpResp, c
 		httpResp.dwError = 0;
 		httpResp.dwStatusCode = dwStatusCode;
 		//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
-		httpResp.strResponse = strServerResponse;
+		httpResp.szResp = strServerResponse;
 		return 0;
 		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
 	}
@@ -989,7 +989,7 @@ PyObject* PyNetKernel::ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszR
 	return pRet;
 }
 
-DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
+DWORD PyNetKernel::OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
 {
 	DWORD dwStatusCode = 0;
 	DWORD dwAvailableData = 0;
@@ -1059,7 +1059,7 @@ DWORD PyNetKernel::OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUr
 	httpResp.dwStatusCode = dwStatusCode;
 	if (pResBuffer)
 	{
-		httpResp.strResponse = std::string(pResBuffer);
+		httpResp.szResp = std::string(pResBuffer);
 		delete[] pResBuffer;
 		pResBuffer = NULL;
 	}

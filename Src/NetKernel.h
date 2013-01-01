@@ -50,19 +50,19 @@ public:
 
 	void SetCallback(PyObject* callback);
 
-	DWORD SendHttpRequest(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
+	DWORD SendHttpRequest(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
 		BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody = NULL, const WCHAR* lpwszResponse = NULL,
 		const WCHAR* lpwszDump = NULL);
 
-	DWORD SendHttpContent(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+	DWORD SendHttpContent(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 		DWORD wPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpBody, DWORD dwLength,
 		const WCHAR* lpwszResponse, const WCHAR* lpwszDump = NULL);
 
-	DWORD SendHttpRequestMultipart(HttpResponseValueObject& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+	DWORD SendHttpRequestMultipart(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
 		const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 		const WCHAR* lpwszResponse = NULL, const WCHAR* lpwszDump = NULL);
 
-	DWORD OpenUrl(HttpResponseValueObject& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
+	DWORD OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
 
 	PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 		const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
