@@ -900,7 +900,7 @@ BOOL PyNetKernel::ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszR
 		bSuccess = TRUE;
 	} while(0);
 
-	if(dwError == 0)
+	if(!bSuccess)
 		dwError = ::GetLastError();
 
 	// Close all handles.
@@ -1054,6 +1054,7 @@ DWORD PyNetKernel::OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const 
 			bSuccess = TRUE;
 		} while(0);
 	}
+
 	m_cSimpleEvent.Reset();
 	httpResp.dwError = dwError;
 	httpResp.dwStatusCode = dwStatusCode;
