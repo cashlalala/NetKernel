@@ -1416,9 +1416,9 @@ void DeleteInstance(INetKernel* pInst)
 	{
 		delete *it;
 		*it = NULL;
-		g_listNetKernel.erase(it);
 		pInst = NULL;
 	}
+	g_listNetKernel.clear();
 
 }
 
