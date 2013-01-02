@@ -28,11 +28,6 @@ class CacheCallbacker;
 class PyNetKernel;
 #endif
 
-extern "C" __declspec(dllexport) INetKernel* GetSingletonInstance();
-extern "C" __declspec(dllexport) INetKernel* GetInstance();
-
-extern "C" __declspec(dllexport) void DeleteInstance(INetKernel* pInst = NULL);
-
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
 inline std::string genBoundary();

@@ -1385,15 +1385,15 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 }
 
 //Init with dll main
-static list<PyNetKernel*> g_listNetKernel;
+static list<INetKernel*> g_listNetKernel;
 
-INetKernel* GetSingletonInstance()
+extern "C" __declspec(dllexport) INetKernel* __cdecl GetSingletonInstance()
 {
 	static PyNetKernel pyNetKernel;
 	return &pyNetKernel;
 }
 
-INetKernel* GetInstance()
+extern "C" __declspec(dllexport) INetKernel* __cdecl GetInstance()
 {
 	PyNetKernel* pInst = new PyNetKernel();
 	g_listNetKernel.push_back(pInst);
@@ -1401,18 +1401,19 @@ INetKernel* GetInstance()
 }
 
 
-void DeleteInstance(INetKernel* pInst)
+extern "C" __declspec(dllexport) void __cdecl DeleteInstance (INetKernel* pInst)
 {
 	if (pInst!=NULL)
 	{
-		list<PyNetKernel*>::iterator it = find(g_listNetKernel.begin(),g_listNetKernel.end(),pInst);
+		list<INetKernel*>::iterator it = find(g_listNetKernel.begin(),g_listNetKernel.end(),pInst);
 		delete *it;
 		*it = NULL;
 		g_listNetKernel.erase(it);
+		pInst = NULL;
 		return;
 	}
 
-	for (list<PyNetKernel*>::iterator it=g_listNetKernel.begin();it!=g_listNetKernel.end();++it)
+	for (list<INetKernel*>::iterator it=g_listNetKernel.begin();it!=g_listNetKernel.end();++it)
 	{
 		delete *it;
 		*it = NULL;
