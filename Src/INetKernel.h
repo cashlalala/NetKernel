@@ -85,6 +85,7 @@ enum DEL_CACHE_TYPE
 
 struct INetKernel
 {
+	virtual ~INetKernel() = 0;
 
 	/*
 	*  A primitive function with multipart/form-upload, You need to compose the required header & content by yourself.
@@ -156,4 +157,6 @@ struct INetKernel
 	virtual void GetCacheFilePath(WCHAR* lpwszFileName) = 0;
 
 };
+
+inline INetKernel::~INetKernel() {};
 
