@@ -167,7 +167,7 @@ BOOL ResolveUri(const CHAR* lpszUri, std::string& strUrl, BOOL& bSecure, std::st
 }
 
 
-PyNetKernel::PyNetKernel() :
+CNetKernel::CNetKernel() :
 m_hInternet(NULL),
 m_hConnect(NULL),
 m_hRequest(NULL),
@@ -180,7 +180,7 @@ m_cSimpleEvent(TRUE)
 }
 
 
-PyNetKernel::~PyNetKernel()
+CNetKernel::~CNetKernel()
 {
 	// Check the handles for safe.
 	CloseInternetHandle(m_hRequest, m_hConnect,  m_hInternet);
@@ -193,7 +193,7 @@ PyNetKernel::~PyNetKernel()
 
 
 // Send text body request.
-DWORD PyNetKernel::SendHttpRequest(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
+DWORD CNetKernel::SendHttpRequest(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD wPort,
 	BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
 	return SendHttpContent(httpResp, lpszApName, lpszMethod, lpszServer, wPort, bSecure, lpszUrl, lpszHeader,
@@ -202,7 +202,7 @@ DWORD PyNetKernel::SendHttpRequest(HttpRespValObj& httpResp, const CHAR* lpszApN
 
 
 // The function to do all send data jobs.
-DWORD PyNetKernel::SendHttpContent(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
+DWORD CNetKernel::SendHttpContent(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer,
 	DWORD dwPort, BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader,
 	const CHAR* lpBody, DWORD dwLength, const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -259,7 +259,7 @@ DWORD PyNetKernel::SendHttpContent(HttpRespValObj& httpResp, const CHAR* lpszApN
 }
 
 
-BOOL PyNetKernel::SendHttpReq(HINTERNET& hRequest, BOOL bUseProxy, const CHAR* lpszHeader, LPVOID lpOptional, DWORD dwLength, DWORD& dwStatusCode)
+BOOL CNetKernel::SendHttpReq(HINTERNET& hRequest, BOOL bUseProxy, const CHAR* lpszHeader, LPVOID lpOptional, DWORD dwLength, DWORD& dwStatusCode)
 {
 	dprintf("[NetKernel] Send HTTP request: %s", lpszHeader);
 	if(bUseProxy)
@@ -290,7 +290,7 @@ BOOL PyNetKernel::SendHttpReq(HINTERNET& hRequest, BOOL bUseProxy, const CHAR* l
 }
 
 
-BOOL PyNetKernel::PrepareConnection(HINTERNET& hInternet, HINTERNET& hConnect, HINTERNET& hRequest, const CHAR* lpszApName,
+BOOL CNetKernel::PrepareConnection(HINTERNET& hInternet, HINTERNET& hConnect, HINTERNET& hRequest, const CHAR* lpszApName,
 	const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort, BOOL bSecure, const CHAR* lpszUrl)
 {
 	if(OnStateCallBack("connect", 0, 0) != CALLBACK_OK)
@@ -316,7 +316,7 @@ BOOL PyNetKernel::PrepareConnection(HINTERNET& hInternet, HINTERNET& hConnect, H
 }
 
 
-BOOL PyNetKernel::QueryResponseInfo(HINTERNET& hRequest, DWORD& dwStatusCode, DWORD& dwResLength, std::string& contentType)
+BOOL CNetKernel::QueryResponseInfo(HINTERNET& hRequest, DWORD& dwStatusCode, DWORD& dwResLength, std::string& contentType)
 {
 	DWORD dwBufferLength = sizeof(dwStatusCode);
 	BOOL bStatusRead = ::HttpQueryInfoA(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &dwStatusCode, &dwBufferLength, 0);
@@ -345,7 +345,7 @@ BOOL PyNetKernel::QueryResponseInfo(HINTERNET& hRequest, DWORD& dwStatusCode, DW
 }
 
 
-BOOL PyNetKernel::ReceiveTextResponse(HINTERNET& hRequest, DWORD dwContentLength, std::string& strServerResponse)
+BOOL CNetKernel::ReceiveTextResponse(HINTERNET& hRequest, DWORD dwContentLength, std::string& strServerResponse)
 {
 	char szBuffer[_MAX_PATH];
 	DWORD dwRead = 0;
@@ -365,7 +365,7 @@ BOOL PyNetKernel::ReceiveTextResponse(HINTERNET& hRequest, DWORD dwContentLength
 }
 
 
-BOOL PyNetKernel::ReceiveResponseToFile(HINTERNET& hRequest, DWORD dwContentLength, const WCHAR* lpwszResponse)
+BOOL CNetKernel::ReceiveResponseToFile(HINTERNET& hRequest, DWORD dwContentLength, const WCHAR* lpwszResponse)
 {
 	std::ofstream outResponse;
 	try
@@ -409,7 +409,7 @@ BOOL PyNetKernel::ReceiveResponseToFile(HINTERNET& hRequest, DWORD dwContentLeng
 
 // This function will allocate the buffer use new operator.
 // The response data maybe raw data or string.
-BOOL PyNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentLength, char* &pResBuffer)
+BOOL CNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentLength, char* &pResBuffer)
 {
 	DWORD dwRead = 0;
 	DWORD dwTotalRead = 0;
@@ -459,7 +459,7 @@ BOOL PyNetKernel::ReceiveResponseToBuffer(HINTERNET& hRequest, DWORD& dwContentL
 }
 
 
-BOOL PyNetKernel::ReceiveResponse(HINTERNET& hRequest, DWORD& dwStatusCode, const WCHAR* lpwszResponse,
+BOOL CNetKernel::ReceiveResponse(HINTERNET& hRequest, DWORD& dwStatusCode, const WCHAR* lpwszResponse,
 								  std::string& strServerResponse, DWORD& dwError, const WCHAR* lpwszDump)
 {
 	DWORD dwContentLength = 0;	// "Content-Length" field in response header.
@@ -499,7 +499,7 @@ BOOL PyNetKernel::ReceiveResponse(HINTERNET& hRequest, DWORD& dwStatusCode, cons
 }
 
 
-void PyNetKernel::CloseInternetHandle(HINTERNET& hRequest, HINTERNET& hConnect, HINTERNET& hInternet)
+void CNetKernel::CloseInternetHandle(HINTERNET& hRequest, HINTERNET& hConnect, HINTERNET& hInternet)
 {
 	if(hRequest)
 	{
@@ -519,7 +519,7 @@ void PyNetKernel::CloseInternetHandle(HINTERNET& hRequest, HINTERNET& hConnect, 
 }
 
 
-BOOL PyNetKernel::WriteInternetContent(HINTERNET& hRequest, const char* lpContent, DWORD dwLength, DWORD& dwSent, DWORD dwContentLength)
+BOOL CNetKernel::WriteInternetContent(HINTERNET& hRequest, const char* lpContent, DWORD dwLength, DWORD& dwSent, DWORD dwContentLength)
 {
 	DWORD written = 0;
 	DWORD totalWrite = 0;
@@ -544,7 +544,7 @@ BOOL PyNetKernel::WriteInternetContent(HINTERNET& hRequest, const char* lpConten
 }
 
 
-BOOL PyNetKernel::WriteMultipartBody(HINTERNET& hRequest, std::vector<MultiPartInfo>& infoList, DWORD dwContentLength)
+BOOL CNetKernel::WriteMultipartBody(HINTERNET& hRequest, std::vector<MultiPartInfo>& infoList, DWORD dwContentLength)
 {
 	dprintf(L"[NetKernel] Now write:");
 
@@ -625,7 +625,7 @@ BOOL PyNetKernel::WriteMultipartBody(HINTERNET& hRequest, std::vector<MultiPartI
 //
 // The parameters above must give, even the data is empty, caller should give like: 'filename':u''
 //
-DWORD PyNetKernel::SendHttpRequestMultipart(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
+DWORD CNetKernel::SendHttpRequestMultipart(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszUri, const CHAR* lpszMethod,
 	const WCHAR* lpwszProxy, const CHAR* lpszHeader, std::vector<MultiPartInfo> vecMultiPart, DWORD dwContentLength,
 	const WCHAR* lpwszResponse, const WCHAR* lpwszDump)
 {
@@ -741,7 +741,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpRespValObj& httpResp, const CHAR
 }
 
 
-BOOL PyNetKernel::SendUrlRequestImpl(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
+BOOL CNetKernel::SendUrlRequestImpl(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
 									  const CHAR* pBodyBuffer, DWORD dwSendLength, DWORD& dwStatusCode, DWORD& dwAvailableData, DWORD& dwError)
 {
 	std::string strUrl;
@@ -864,7 +864,7 @@ BOOL PyNetKernel::SendUrlRequestImpl(const CHAR* lpszUri, const CHAR* lpszMethod
 }
 
 
-BOOL PyNetKernel::ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszResponse, char*& pResBuffer, DWORD& dwError)
+BOOL CNetKernel::ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszResponse, char*& pResBuffer, DWORD& dwError)
 {
 	BOOL bSuccess = FALSE;
 
@@ -981,7 +981,7 @@ BOOL PyNetKernel::ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszR
 //	return pRet;
 //}
 
-DWORD PyNetKernel::OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
+DWORD CNetKernel::OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
 {
 	DWORD dwStatusCode = 0;
 	DWORD dwAvailableData = 0;
@@ -1059,7 +1059,7 @@ DWORD PyNetKernel::OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const 
 	return dwError;
 }
 
-BOOL PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
+BOOL CNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
 {
 	BOOL bRet = FALSE;
 	HANDLE hEntry;
@@ -1109,23 +1109,23 @@ BOOL PyNetKernel::DeleteUrlCache(int type, const WCHAR* lpwszCookieName)
 	return bRet;
 }
 
-void PyNetKernel::ForceStop()
+void CNetKernel::ForceStop()
 {
 	m_bForceClose = TRUE;
 	CloseInternetHandle(m_hRequest, m_hConnect,  m_hInternet);
 }
 
-void PyNetKernel::SetWindowHandle(HWND hWnd)
+void CNetKernel::SetWindowHandle(HWND hWnd)
 {
 	m_hWnd = hWnd;
 }
 
-long PyNetKernel::OnStateCallBack(const char* lpszState, int nCurrent, int nTotal)
+long CNetKernel::OnStateCallBack(const char* lpszState, int nCurrent, int nTotal)
 {
 	return 1;
 }
 
-void PyNetKernel::SetDownloadCache(BOOL bCacheDownload)
+void CNetKernel::SetDownloadCache(BOOL bCacheDownload)
 {
 	m_bCacheDownload = bCacheDownload;
 }
@@ -1277,7 +1277,7 @@ void PyNetKernel::SetDownloadCache(BOOL bCacheDownload)
 //	return Py_BuildValue("bu", false, L"");
 //}
 
-void PyNetKernel::SetHaveRegToOLREG()
+void CNetKernel::SetHaveRegToOLREG()
 {
 	WCHAR szCurrentDir[_MAX_PATH] = L"";
 	WCHAR szCurrentOLReg[_MAX_PATH] = L"";
@@ -1339,12 +1339,12 @@ void PyNetKernel::SetHaveRegToOLREG()
 }
 
 
-BOOL PyNetKernel::ResolveUrl(const CHAR* lpszUri, UrlValueObject& cUriVO)
+BOOL CNetKernel::ResolveUrl(const CHAR* lpszUri, UrlValueObject& cUriVO)
 {
 	return ResolveUri(lpszUri, cUriVO.strRqstUrl, cUriVO.bSecure, cUriVO.strHost, cUriVO.dwPort);
 }
 
-void PyNetKernel::GetCacheFilePath( WCHAR* lpwszFileName )
+void CNetKernel::GetCacheFilePath( WCHAR* lpwszFileName )
 {
 	if (wcslen(m_lpcwszCookieFileName)==0) return;
 	wcscpy_s(lpwszFileName,wcslen(m_lpcwszCookieFileName)+1,m_lpcwszCookieFileName);
@@ -1377,13 +1377,13 @@ static list<INetKernel*> g_listNetKernel;
 
 extern "C" __declspec(dllexport) INetKernel* __cdecl GetSingletonInstance()
 {
-	static PyNetKernel pyNetKernel;
+	static CNetKernel pyNetKernel;
 	return &pyNetKernel;
 }
 
 extern "C" __declspec(dllexport) INetKernel* __cdecl GetInstance()
 {
-	PyNetKernel* pInst = new PyNetKernel();
+	CNetKernel* pInst = new CNetKernel();
 	g_listNetKernel.push_back(pInst);
 	return pInst;
 }

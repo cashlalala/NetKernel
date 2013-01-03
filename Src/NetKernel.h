@@ -21,20 +21,20 @@ const BOOL CACHE_NOUSE	= FALSE;
 
 #ifndef __SWIG__
 class CacheCallbacker;
-class PyNetKernel;
+class CNetKernel;
 #endif
 
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
 inline std::string genBoundary();
 
-class PyNetKernel : public INetKernel
+class CNetKernel : public INetKernel
 {
 public:
 	friend CacheCallbacker;
 
-	PyNetKernel();
-	virtual ~PyNetKernel();
+	CNetKernel();
+	virtual ~CNetKernel();
 
 	//void SetCallback(PyObject* callback);
 
@@ -121,7 +121,7 @@ private:
 class CacheCallbacker : public IBindStatusCallback
 {
 public:
-	CacheCallbacker(PyNetKernel* pNetKernel) : m_cRef(0), m_pNetKernel(pNetKernel) {}
+	CacheCallbacker(CNetKernel* pNetKernel) : m_cRef(0), m_pNetKernel(pNetKernel) {}
 	virtual ~CacheCallbacker() {}
 
 	virtual HRESULT STDMETHODCALLTYPE GetBindInfo(DWORD *grfBINDF, BINDINFO *pbindinfo) {return S_OK;}
@@ -160,7 +160,7 @@ public:
 
 private:
 	int m_cRef;
-	PyNetKernel* m_pNetKernel;
+	CNetKernel* m_pNetKernel;
 };
 #endif
 
