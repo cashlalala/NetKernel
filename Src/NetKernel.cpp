@@ -11,6 +11,7 @@
 #include <Shlwapi.h>
 #include <list>
 #include <algorithm>
+#include <ctime>
 
 using std::list;
 
@@ -186,9 +187,9 @@ PyNetKernel::~PyNetKernel()
 }
 
 
-void PyNetKernel::SetCallback(PyObject* callback)
-{
-}
+//void PyNetKernel::SetCallback(PyObject* callback)
+//{
+//}
 
 
 // Send text body request.
@@ -899,85 +900,86 @@ BOOL PyNetKernel::ReceiveUrlDataImpl(DWORD& dwContentLength, const WCHAR* lpwszR
 	return bSuccess;
 }
 
-PyObject* PyNetKernel::SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
-						 const CHAR* pBodyBuffer, DWORD dwBodyLength)
-{
-	DWORD dwStatusCode = 0;
-	DWORD dwAvailableData = 0;
+//PyObject* PyNetKernel::SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
+//						 const CHAR* pBodyBuffer, DWORD dwBodyLength)
+//{
+//	DWORD dwStatusCode = 0;
+//	DWORD dwAvailableData = 0;
+//
+//	BOOL bSuccess = FALSE;
+//	DWORD dwError = 0;
+//
+//	// Change the flag before unlock.
+//	m_bForceClose = FALSE;
+//
+//	char lpszHeaderBuffer[MAX_HEADER_SIZE];
+//	DWORD dwHeaderSize = sizeof(lpszHeaderBuffer);
+//
+//	m_cSimpleEvent.Set();
+//	do{
+//		if(!SendUrlRequestImpl(lpszUri, lpszMethod, lpwszProxy, lpszHeader, pBodyBuffer, dwBodyLength, dwStatusCode, dwAvailableData, dwError))
+//			continue;
+//
+//		if(!HttpQueryInfoA(m_hRequest, HTTP_QUERY_RAW_HEADERS_CRLF, lpszHeaderBuffer, &dwHeaderSize, 0))
+//			continue;
+//
+//		bSuccess = TRUE;
+//	}while(0);
+//	m_cSimpleEvent.Reset();
+//
+//	PyObject* pRet = NULL;
+//	if(m_bForceClose)
+//	{
+//		pRet = Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
+//	}
+//	else if(bSuccess)
+//	{
+//		pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, lpszHeaderBuffer, dwHeaderSize);
+//	}
+//	else
+//		pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, "", 0);
+//
+//	return pRet;
+//}
 
-	BOOL bSuccess = FALSE;
-	DWORD dwError = 0;
 
-	// Change the flag before unlock.
-	m_bForceClose = FALSE;
-
-	char lpszHeaderBuffer[MAX_HEADER_SIZE];
-	DWORD dwHeaderSize = sizeof(lpszHeaderBuffer);
-
-	m_cSimpleEvent.Set();
-	do{
-		if(!SendUrlRequestImpl(lpszUri, lpszMethod, lpwszProxy, lpszHeader, pBodyBuffer, dwBodyLength, dwStatusCode, dwAvailableData, dwError))
-			continue;
-
-		if(!HttpQueryInfoA(m_hRequest, HTTP_QUERY_RAW_HEADERS_CRLF, lpszHeaderBuffer, &dwHeaderSize, 0))
-			continue;
-
-		bSuccess = TRUE;
-	}while(0);
-	m_cSimpleEvent.Reset();
-
-	PyObject* pRet = NULL;
-	if(m_bForceClose)
-	{
-		pRet = Py_BuildValue("iis", (int)dwError, (int)dwStatusCode, "");
-	}
-	else if(bSuccess)
-	{
-		pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, lpszHeaderBuffer, dwHeaderSize);
-	}
-	else
-		pRet = Py_BuildValue("iis#", (int)dwError, (int)dwStatusCode, "", 0);
-
-	return pRet;
-}
-
-PyObject* PyNetKernel::ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse)
-{
-	char* pResBuffer = NULL;
-	BOOL bSuccess = FALSE;
-	DWORD dwError = 0;
-
-	// Change the flag before unlock.
-	m_bForceClose = FALSE;
-
-	m_cSimpleEvent.Set();
-	do{
-		if(!ReceiveUrlDataImpl(dwContentLength, lpwszResponse, pResBuffer, dwError))
-			continue;
-
-		bSuccess = TRUE;
-	}while(0);
-	m_cSimpleEvent.Reset();
-
-	PyObject* pRet = NULL;
-	if(m_bForceClose)
-	{
-		pRet = Py_BuildValue("is", (int)dwError, "");
-
-		delete [] pResBuffer;
-		pResBuffer = NULL;
-	}
-	else if(bSuccess)
-	{
-		pRet = Py_BuildValue("is#", (int)dwError, pResBuffer, dwContentLength);
-		delete [] pResBuffer;
-		pResBuffer = NULL;
-	}
-	else
-		pRet = Py_BuildValue("is#", (int)dwError, "", 0);
-
-	return pRet;
-}
+//PyObject* PyNetKernel::ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse)
+//{
+//	char* pResBuffer = NULL;
+//	BOOL bSuccess = FALSE;
+//	DWORD dwError = 0;
+//
+//	// Change the flag before unlock.
+//	m_bForceClose = FALSE;
+//
+//	m_cSimpleEvent.Set();
+//	do{
+//		if(!ReceiveUrlDataImpl(dwContentLength, lpwszResponse, pResBuffer, dwError))
+//			continue;
+//
+//		bSuccess = TRUE;
+//	}while(0);
+//	m_cSimpleEvent.Reset();
+//
+//	PyObject* pRet = NULL;
+//	if(m_bForceClose)
+//	{
+//		pRet = Py_BuildValue("is", (int)dwError, "");
+//
+//		delete [] pResBuffer;
+//		pResBuffer = NULL;
+//	}
+//	else if(bSuccess)
+//	{
+//		pRet = Py_BuildValue("is#", (int)dwError, pResBuffer, dwContentLength);
+//		delete [] pResBuffer;
+//		pResBuffer = NULL;
+//	}
+//	else
+//		pRet = Py_BuildValue("is#", (int)dwError, "", 0);
+//
+//	return pRet;
+//}
 
 DWORD PyNetKernel::OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,const WCHAR* lpwszResponse, const CHAR* pBodyBuffer, DWORD dwBodyLength)
 {
@@ -1128,152 +1130,152 @@ void PyNetKernel::SetDownloadCache(BOOL bCacheDownload)
 	m_bCacheDownload = bCacheDownload;
 }
 
-PyObject* PyNetKernel::GetDZRegParams()
-{
-	HRESULT hr = E_FAIL;
-	WCHAR szCurrentDir[_MAX_PATH] = L"";
-	WCHAR szCurrentOLReg[_MAX_PATH] = L"";
-	WCHAR szCurrentOLRState[_MAX_PATH] = L"";
-	WCHAR szParam[_MAX_PATH] = L"";
-	WCHAR szIsRegister[_MAX_PATH] = L"";
-	WCHAR szDZRegParams[4*1024] = L"";
-
-	// Get OLReg/OLRStateCheck file path
-	GetModuleFileName(NULL, szCurrentDir, _MAX_PATH);
-	PathRemoveFileSpec(szCurrentDir);
-	PathAppend(szCurrentDir, L"OLRSubmission");
-	wcscpy_s(szCurrentOLReg, _MAX_PATH, szCurrentDir);
-	wcscpy_s(szCurrentOLRState, _MAX_PATH, szCurrentDir);
-	PathAppend(szCurrentOLReg, L"OLRSubmission.exe");
-	PathAppend(szCurrentOLRState, L"OLRStateCheck.exe");
-
-	// Set parameter to OLReg/OLRStateCheck
-	wcscpy_s(szParam, _MAX_PATH, L" /IsRegister");
-
-	if (PathFileExists(szCurrentDir))
-	{
-		STARTUPINFO 				StartupInfo;
-		PROCESS_INFORMATION	        ProcessInfo;
-		ZeroMemory(&StartupInfo, sizeof(StartupInfo));
-		ZeroMemory(&ProcessInfo, sizeof(ProcessInfo));
-
-		StartupInfo.cb				= sizeof(StartupInfo);
-		StartupInfo.dwFlags			= STARTF_USESHOWWINDOW;
-		StartupInfo.wShowWindow	    = SW_SHOWNORMAL;
-		StartupInfo.lpReserved		= NULL;
-		StartupInfo.lpDesktop		= NULL;
-		StartupInfo.lpTitle			= NULL;
-		StartupInfo.cbReserved2		= 0;
-		StartupInfo.lpReserved2		= NULL;
-
-		// Use "CreateProcess" instead of "ShellExecuteEx" because ShellExecuteEx may cause a bug that WaitForSingleObject may not work.
-		// Some computers return immediately from WaitForSingleObject when the process has not terminated yet.
-		// ShellExecuteEx is not stable, and it is recommended that UI should use "CreatePorcess" instead of "ShellExecuteEx".
-		WCHAR szCommandLine[_MAX_PATH] = L"";
-		wcscat_s(szCommandLine, szCurrentOLRState);
-		wcscat_s(szCommandLine, szParam);
-
-		// create shared memory for OLReg/OLRStateCheck
-		//================================================================================
-		HANDLE hFileMapping = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, 
-			PAGE_READWRITE, 0, 4*1024, TEXT("OLRegSharedMemory"));
-			
-		if (!hFileMapping)
-		{
-			dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():FileMapping is wrong");
-			DeleteObject(hFileMapping);
-			if (ProcessInfo.hProcess)
-				CloseHandle(ProcessInfo.hProcess);
-			if (ProcessInfo.hThread)
-				CloseHandle(ProcessInfo.hThread);
-			return Py_BuildValue("bu", false, L"");
-		}
-		//================================================================================
-
-		if (!CreateProcess(NULL, szCommandLine, NULL, NULL, TRUE, 
-			NORMAL_PRIORITY_CLASS, NULL, NULL, &StartupInfo, &ProcessInfo))
-		{
-			dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():Fail to create OLRStateCheck process: %s", szCommandLine);
-			DeleteObject(hFileMapping);
-			if (ProcessInfo.hProcess)
-				CloseHandle(ProcessInfo.hProcess);
-			if (ProcessInfo.hThread)
-				CloseHandle(ProcessInfo.hThread);
-			return Py_BuildValue("bu", false, L"");
-		}
-
-		// wait for OLRStateCheck.exe 
-		WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
-
-		// read shared memory
-		WCHAR* lpcwData = (WCHAR*)MapViewOfFile(hFileMapping, FILE_MAP_READ | FILE_MAP_WRITE , 0, 0, 0);
-		if (!lpcwData)
-		{
-			dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():MapViewOfFile is NULL");
-		}
-		else
-		{
-			wcscpy_s(szIsRegister, _MAX_PATH, lpcwData);
-
-			UnmapViewOfFile(lpcwData);
-			ZeroMemory(szCommandLine, sizeof(szCommandLine));
-			ZeroMemory(szParam, sizeof(szParam));
-			wcscpy_s(szParam, L" /DirectZone");
-			wcscat_s(szCommandLine, szCurrentOLReg);
-			wcscat_s(szCommandLine, szParam);
-
-			if (!CreateProcess(NULL, szCommandLine, NULL, NULL, TRUE, 
-				NORMAL_PRIORITY_CLASS, NULL, NULL, &StartupInfo, &ProcessInfo))
-			{
-				dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():Fail to create OLRSubmission process: %s", szCommandLine);
-				DeleteObject(hFileMapping);
-				if (ProcessInfo.hProcess)
-					CloseHandle(ProcessInfo.hProcess);
-				if (ProcessInfo.hThread)
-					CloseHandle(ProcessInfo.hThread);
-				return Py_BuildValue("bu", false, L"");
-			}
-
-			// wait for OLReg
-			WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
-
-			// read shared memory
-			WCHAR* lpcwURL = (WCHAR*)MapViewOfFile(hFileMapping, FILE_MAP_READ | FILE_MAP_WRITE , 0, 0, 0);
-			if (!lpcwURL)
-			{
-				dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():MapViewOfFile is NULL");
-			}
-			else
-			{
-				wcscpy_s(szDZRegParams, 4*1024, lpcwURL);
-				UnmapViewOfFile(lpcwURL);
-			}
-		} 
-		DeleteObject(hFileMapping);
-
-		DWORD dwRet = 1;
-		BOOL bRet = GetExitCodeProcess(ProcessInfo.hProcess, &dwRet);
-		if (bRet && 0 == dwRet)	
-		{
-			hr = S_OK;
-		}
-
-		if (ProcessInfo.hProcess)
-			CloseHandle(ProcessInfo.hProcess);
-		if (ProcessInfo.hThread)
-			CloseHandle(ProcessInfo.hThread);
-	}
-
-	if (hr == S_OK && szIsRegister && szDZRegParams)
-	{
-		if (wcsstr(szIsRegister, L"FALSE") != NULL)
-			return Py_BuildValue("bu", false, szDZRegParams);
-		else
-			return Py_BuildValue("bu", true, szDZRegParams);
-	}
-
-	return Py_BuildValue("bu", false, L"");
-}
+//PyObject* PyNetKernel::GetDZRegParams()
+//{
+//	HRESULT hr = E_FAIL;
+//	WCHAR szCurrentDir[_MAX_PATH] = L"";
+//	WCHAR szCurrentOLReg[_MAX_PATH] = L"";
+//	WCHAR szCurrentOLRState[_MAX_PATH] = L"";
+//	WCHAR szParam[_MAX_PATH] = L"";
+//	WCHAR szIsRegister[_MAX_PATH] = L"";
+//	WCHAR szDZRegParams[4*1024] = L"";
+//
+//	// Get OLReg/OLRStateCheck file path
+//	GetModuleFileName(NULL, szCurrentDir, _MAX_PATH);
+//	PathRemoveFileSpec(szCurrentDir);
+//	PathAppend(szCurrentDir, L"OLRSubmission");
+//	wcscpy_s(szCurrentOLReg, _MAX_PATH, szCurrentDir);
+//	wcscpy_s(szCurrentOLRState, _MAX_PATH, szCurrentDir);
+//	PathAppend(szCurrentOLReg, L"OLRSubmission.exe");
+//	PathAppend(szCurrentOLRState, L"OLRStateCheck.exe");
+//
+//	// Set parameter to OLReg/OLRStateCheck
+//	wcscpy_s(szParam, _MAX_PATH, L" /IsRegister");
+//
+//	if (PathFileExists(szCurrentDir))
+//	{
+//		STARTUPINFO 				StartupInfo;
+//		PROCESS_INFORMATION	        ProcessInfo;
+//		ZeroMemory(&StartupInfo, sizeof(StartupInfo));
+//		ZeroMemory(&ProcessInfo, sizeof(ProcessInfo));
+//
+//		StartupInfo.cb				= sizeof(StartupInfo);
+//		StartupInfo.dwFlags			= STARTF_USESHOWWINDOW;
+//		StartupInfo.wShowWindow	    = SW_SHOWNORMAL;
+//		StartupInfo.lpReserved		= NULL;
+//		StartupInfo.lpDesktop		= NULL;
+//		StartupInfo.lpTitle			= NULL;
+//		StartupInfo.cbReserved2		= 0;
+//		StartupInfo.lpReserved2		= NULL;
+//
+//		// Use "CreateProcess" instead of "ShellExecuteEx" because ShellExecuteEx may cause a bug that WaitForSingleObject may not work.
+//		// Some computers return immediately from WaitForSingleObject when the process has not terminated yet.
+//		// ShellExecuteEx is not stable, and it is recommended that UI should use "CreatePorcess" instead of "ShellExecuteEx".
+//		WCHAR szCommandLine[_MAX_PATH] = L"";
+//		wcscat_s(szCommandLine, szCurrentOLRState);
+//		wcscat_s(szCommandLine, szParam);
+//
+//		// create shared memory for OLReg/OLRStateCheck
+//		//================================================================================
+//		HANDLE hFileMapping = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, 
+//			PAGE_READWRITE, 0, 4*1024, TEXT("OLRegSharedMemory"));
+//			
+//		if (!hFileMapping)
+//		{
+//			dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():FileMapping is wrong");
+//			DeleteObject(hFileMapping);
+//			if (ProcessInfo.hProcess)
+//				CloseHandle(ProcessInfo.hProcess);
+//			if (ProcessInfo.hThread)
+//				CloseHandle(ProcessInfo.hThread);
+//			return Py_BuildValue("bu", false, L"");
+//		}
+//		//================================================================================
+//
+//		if (!CreateProcess(NULL, szCommandLine, NULL, NULL, TRUE, 
+//			NORMAL_PRIORITY_CLASS, NULL, NULL, &StartupInfo, &ProcessInfo))
+//		{
+//			dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():Fail to create OLRStateCheck process: %s", szCommandLine);
+//			DeleteObject(hFileMapping);
+//			if (ProcessInfo.hProcess)
+//				CloseHandle(ProcessInfo.hProcess);
+//			if (ProcessInfo.hThread)
+//				CloseHandle(ProcessInfo.hThread);
+//			return Py_BuildValue("bu", false, L"");
+//		}
+//
+//		// wait for OLRStateCheck.exe 
+//		WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
+//
+//		// read shared memory
+//		WCHAR* lpcwData = (WCHAR*)MapViewOfFile(hFileMapping, FILE_MAP_READ | FILE_MAP_WRITE , 0, 0, 0);
+//		if (!lpcwData)
+//		{
+//			dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():MapViewOfFile is NULL");
+//		}
+//		else
+//		{
+//			wcscpy_s(szIsRegister, _MAX_PATH, lpcwData);
+//
+//			UnmapViewOfFile(lpcwData);
+//			ZeroMemory(szCommandLine, sizeof(szCommandLine));
+//			ZeroMemory(szParam, sizeof(szParam));
+//			wcscpy_s(szParam, L" /DirectZone");
+//			wcscat_s(szCommandLine, szCurrentOLReg);
+//			wcscat_s(szCommandLine, szParam);
+//
+//			if (!CreateProcess(NULL, szCommandLine, NULL, NULL, TRUE, 
+//				NORMAL_PRIORITY_CLASS, NULL, NULL, &StartupInfo, &ProcessInfo))
+//			{
+//				dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():Fail to create OLRSubmission process: %s", szCommandLine);
+//				DeleteObject(hFileMapping);
+//				if (ProcessInfo.hProcess)
+//					CloseHandle(ProcessInfo.hProcess);
+//				if (ProcessInfo.hThread)
+//					CloseHandle(ProcessInfo.hThread);
+//				return Py_BuildValue("bu", false, L"");
+//			}
+//
+//			// wait for OLReg
+//			WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
+//
+//			// read shared memory
+//			WCHAR* lpcwURL = (WCHAR*)MapViewOfFile(hFileMapping, FILE_MAP_READ | FILE_MAP_WRITE , 0, 0, 0);
+//			if (!lpcwURL)
+//			{
+//				dprintf(L"[NetKernel] PyNetKernel::GetDZRegParams():MapViewOfFile is NULL");
+//			}
+//			else
+//			{
+//				wcscpy_s(szDZRegParams, 4*1024, lpcwURL);
+//				UnmapViewOfFile(lpcwURL);
+//			}
+//		} 
+//		DeleteObject(hFileMapping);
+//
+//		DWORD dwRet = 1;
+//		BOOL bRet = GetExitCodeProcess(ProcessInfo.hProcess, &dwRet);
+//		if (bRet && 0 == dwRet)	
+//		{
+//			hr = S_OK;
+//		}
+//
+//		if (ProcessInfo.hProcess)
+//			CloseHandle(ProcessInfo.hProcess);
+//		if (ProcessInfo.hThread)
+//			CloseHandle(ProcessInfo.hThread);
+//	}
+//
+//	if (hr == S_OK && szIsRegister && szDZRegParams)
+//	{
+//		if (wcsstr(szIsRegister, L"FALSE") != NULL)
+//			return Py_BuildValue("bu", false, szDZRegParams);
+//		else
+//			return Py_BuildValue("bu", true, szDZRegParams);
+//	}
+//
+//	return Py_BuildValue("bu", false, L"");
+//}
 
 void PyNetKernel::SetHaveRegToOLREG()
 {

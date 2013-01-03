@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 #pragma once
-#include <Python.h>
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
@@ -37,7 +36,7 @@ public:
 	PyNetKernel();
 	virtual ~PyNetKernel();
 
-	void SetCallback(PyObject* callback);
+	//void SetCallback(PyObject* callback);
 
 	DWORD SendHttpRequest(HttpRespValObj& httpResp, const CHAR* lpszApName, const CHAR* lpszMethod, const CHAR* lpszServer, DWORD dwPort,
 		BOOL bSecure, const CHAR* lpszUrl, const CHAR* lpszHeader, const CHAR* lpszBody = NULL, const WCHAR* lpwszResponse = NULL,
@@ -53,10 +52,10 @@ public:
 
 	DWORD OpenUrl(HttpRespValObj& httpResp, const CHAR* lpszUri, const CHAR* lpszMethod = NULL, const WCHAR* lpwszProxy = NULL, const CHAR* lpszHeader = NULL, const WCHAR* lpwszResponse = NULL, const CHAR* pBodyBuffer = NULL, DWORD dwContentLength = 0);
 
-	PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
-		const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
+	//PyObject* SendUrlRequest(const CHAR* lpszUri, const CHAR* lpszMethod, const WCHAR* lpwszProxy, const CHAR* lpszHeader,
+	//	const CHAR* pBodyBuffer = NULL, DWORD dwBodyLength = 0);
 
-	PyObject* ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse = NULL);
+	//PyObject* ReceiveUrlData(DWORD dwContentLength, const WCHAR* lpwszResponse = NULL);
 
 	BOOL ResolveUrl(const CHAR* lpszUrl, UrlValueObject& cUriVO);
 
@@ -67,7 +66,7 @@ public:
 	void ForceStop();
 	void SetWindowHandle(HWND hWnd);
 	void SetDownloadCache(BOOL bCacheDownload);
-	PyObject* GetDZRegParams();
+	//PyObject* GetDZRegParams();
 	void SetHaveRegToOLREG();
 
 	void GetCacheFilePath(WCHAR* lpwszFileName);

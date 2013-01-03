@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Include&quot;;C:\Python\Python25x86\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_UNICODE;NETKERNEL_EXPORTS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -66,7 +66,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="Wininet.lib Urlmon.lib Shlwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="F:\KOAN\sdk\lib;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib&quot;;C:\Python\Python25x86\libs;F:\Strmbase.2005\bin"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				ImportLibrary=""
@@ -228,6 +228,10 @@
 			</File>
 			<File
 				RelativePath=".\NetKernel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SimpleEvent.h"
 				>
 			</File>
 		</Filter>
