@@ -1406,11 +1406,14 @@ extern "C" __declspec(dllexport) void __cdecl DeleteInstance (INetKernel* pInst)
 	if (pInst!=NULL)
 	{
 		list<INetKernel*>::iterator it = find(g_listNetKernel.begin(),g_listNetKernel.end(),pInst);
-		delete *it;
-		*it = NULL;
-		g_listNetKernel.erase(it);
-		pInst = NULL;
-		return;
+		if (it!=g_listNetKernel.end() && *it == NULL)
+		{
+			delete *it;
+			*it = NULL;
+			g_listNetKernel.erase(it);
+			pInst = NULL;
+			return;
+		}
 	}
 
 	for (list<INetKernel*>::iterator it=g_listNetKernel.begin();it!=g_listNetKernel.end();++it)
