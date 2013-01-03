@@ -1,6 +1,5 @@
 // NetKernel.cpp : Defines the entry point for the DLL application.
 //
-#include "koan.h"
 #include "NetKernel.h"
 #include "..\..\utility\debug.h"
 #include <string>
@@ -117,13 +116,6 @@ inline std::string genBoundary()
 }
 
 
-PyObject* genPyBoundary()
-{
-	std::string boundary = genBoundary();
-	return Py_BuildValue("s", boundary.substr(0, boundary.length() - 2).c_str());
-}
-
-
 BOOL ResolveUri(const CHAR* lpszUri, std::string& strUrl, BOOL& bSecure, std::string& strHost, DWORD& dwPort)
 {
 	// Protocol strings.
@@ -175,7 +167,6 @@ BOOL ResolveUri(const CHAR* lpszUri, std::string& strUrl, BOOL& bSecure, std::st
 
 
 PyNetKernel::PyNetKernel() :
-PyCallback(),
 m_hInternet(NULL),
 m_hConnect(NULL),
 m_hRequest(NULL),
@@ -197,7 +188,6 @@ PyNetKernel::~PyNetKernel()
 
 void PyNetKernel::SetCallback(PyObject* callback)
 {
-	PyCallback::SetCallback(callback);
 }
 
 
@@ -722,7 +712,7 @@ DWORD PyNetKernel::SendHttpRequestMultipart(HttpRespValObj& httpResp, const CHAR
 	{
 		httpResp.dwError = 0;
 		httpResp.dwStatusCode = dwStatusCode;
-		//SetRespViaStdStr(httpResp.strResponse,strServerResponse);
+		//SetRespViaStdStr(httpResp.szResp,strServerResponse);
 		httpResp.szResp = strServerResponse;
 		return 0;
 		//return Py_BuildValue("iis", (int)0, (int)dwStatusCode, (LPCSTR)strServerResponse.c_str());
@@ -1130,11 +1120,7 @@ void PyNetKernel::SetWindowHandle(HWND hWnd)
 
 long PyNetKernel::OnStateCallBack(const char* lpszState, int nCurrent, int nTotal)
 {
-	if(!m_callback)
-		return CALLBACK_OK;
-
-	m_cSimpleEvent.Reset();
-	return CallBackAsLong("sii", lpszState, nCurrent, nTotal);
+	return 1;
 }
 
 void PyNetKernel::SetDownloadCache(BOOL bCacheDownload)
@@ -1190,7 +1176,7 @@ PyObject* PyNetKernel::GetDZRegParams()
 		// create shared memory for OLReg/OLRStateCheck
 		//================================================================================
 		HANDLE hFileMapping = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, 
-			PAGE_READWRITE, 0, 4*1024, _T("OLRegSharedMemory"));
+			PAGE_READWRITE, 0, 4*1024, TEXT("OLRegSharedMemory"));
 			
 		if (!hFileMapping)
 		{

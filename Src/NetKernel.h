@@ -2,10 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #pragma once
-
-#include "koan.h"
-
-
+#include <Python.h>
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
@@ -31,14 +28,11 @@ class PyNetKernel;
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
 inline std::string genBoundary();
-PyObject* genPyBoundary();
 
-class PyNetKernel : public PyCallback, public INetKernel
+class PyNetKernel : public INetKernel
 {
 public:
 	friend CacheCallbacker;
-	
-	//static PyNetKernel* m_pInstance;
 
 	PyNetKernel();
 	virtual ~PyNetKernel();

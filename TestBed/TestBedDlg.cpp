@@ -243,10 +243,10 @@ void CTestBedDlg::OnBnClickedButtonOpenurl()
 {
 	UpdateData(TRUE);
 	
-	HttpResponseValueObject httpResp;
+	HttpRespValObj httpResp;
 	CString resp;
 	m_pNetKernel->OpenUrl(httpResp, CT2CA(m_szUrl),CT2CA(m_szMethod),0,CT2CA(m_szHeader),resp,CT2CA(m_szBody));
-	CA2W pBuffer(httpResp.strResponse.c_str());
+	CA2W pBuffer(httpResp.szResp.c_str());
 	CString szResp(pBuffer);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 	m_pNetKernel->GetCacheFilePath(m_szCacheName.GetBuffer(MAX_PATH+1));
@@ -259,7 +259,7 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 {
 	UpdateData(TRUE);
 	// TODO: Add your control notification handler code here
-	HttpResponseValueObject httpResp;
+	HttpRespValObj httpResp;
 
 	UrlValueObject cUriVO;
 	m_pNetKernel->ResolveUrl(CT2CA(m_szUrl),cUriVO);
@@ -271,7 +271,7 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequest()
 														m_nPort,FALSE, 
 														cUriVO.strRqstUrl.c_str(),
 														CT2CA(m_szHeader),CT2CA(m_szBody));
-	CA2W pBuff(httpResp.strResponse.c_str());
+	CA2W pBuff(httpResp.szResp.c_str());
 	CString szResp(pBuff);
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n%s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 
@@ -366,7 +366,7 @@ void CTestBedDlg::OnBnClickedCheckMultipart()
 void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
 {
 	UpdateData(TRUE);
-	HttpResponseValueObject httpResp;
+	HttpRespValObj httpResp;
 
 	CStringA szUrl = CT2CA(m_szUrl);
 	CStringA szMethod = CT2CA(m_szMethod);
@@ -374,7 +374,7 @@ void CTestBedDlg::OnBnClickedButtonSendhttprequestmultipart()
 
 	m_pNetKernel->SendHttpRequestMultipart(httpResp, AP_NAME,szUrl,szMethod,m_szProxy,szHeader,m_vecMultiPartInfo,m_nContentLen);
 
-	CString szResp(CA2W(httpResp.strResponse.c_str()));
+	CString szResp(CA2W(httpResp.szResp.c_str()));
 	m_szOutput.Format(_T("Error: %d, HttpStatus: %d \r\n %s"),httpResp.dwError, httpResp.dwStatusCode,szResp);
 
 	UpdateData(FALSE);

@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="F:\KOAN\sdk\include;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Include&quot;;C:\Python\Python25x86\include;F:\Strmbase.2005"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Include&quot;;C:\Python\Python25x86\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_UNICODE;NETKERNEL_EXPORTS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
