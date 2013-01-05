@@ -29,10 +29,10 @@
     <ClInclude Include="..\..\Utility\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NetKernel.h">
+    <ClInclude Include="INetKernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="INetKernel.h">
+    <ClInclude Include="NetKernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleEvent.h">
