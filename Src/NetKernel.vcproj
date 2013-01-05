@@ -69,7 +69,6 @@
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool
@@ -150,11 +149,9 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="..\Internal_Only\$(TargetName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary=".\Release/_NetKernel.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -162,6 +159,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
