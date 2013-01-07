@@ -27,8 +27,8 @@ class CNetKernel;
 void SetDumpFile(BOOL isDump, const WCHAR* lpwszPath);
 
 inline std::string genBoundary();
-
-class CNetKernel : public INetKernel
+//
+class __declspec(dllexport) CNetKernel : public INetKernel
 {
 public:
 	friend CacheCallbacker;

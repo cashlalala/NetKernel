@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-class CSimpleEvent
+class __declspec(dllexport) CSimpleEvent
 {
 	// make copy constructor and assignment operator inaccessible
 	//CSimpleEvent(const CSimpleEvent &refEvent);
